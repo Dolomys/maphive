@@ -1,0 +1,71 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id            String      @id @default(cuid())
+  email         String      @unique
+  name          String?
+  createdAt     DateTime    @default(now()) @map("created_at")
+  updatedAt     DateTime    @updatedAt @map("updated_at")
+  emailVerified DateTime?   @map("email_verified")
+  maps          Map[]       @relation("UserMaps")
+  activities    Activity[]  @relation("ActivityCreator")
+
+  @@map("users")
+}
+
+model Map {
+  id          String      @id @default(uuid())
+  title       String
+  description String?
+  createdAt   DateTime    @default(now()) @map("created_at")
+  updatedAt   DateTime    @updatedAt @map("updated_at")
+  userId      String      @map("user_id")
+  isPublic    Boolean     @default(false) @map("is_public")
+  defaultLat  Float       @default(43.2965) @map("default_lat")
+  defaultLng  Float       @default(5.3698) @map("default_lng")
+  defaultZoom Int         @default(13) @map("default_zoom")
+  user        User        @relation("UserMaps", fields: [userId], references: [id], onDelete: Cascade)
+  activities  Activity[]
+
+  @@map("maps")
+}
+
+enum ActivityCategory {
+  hike
+  restaurant
+  cafe
+  bar
+  shop
+  park
+  other
+
+  @@map("activity_category")
+}
+
+model Activity {
+  id          String           @id @default(uuid())
+  mapId       String          @map("map_id")
+  title       String
+  subtitle    String?
+  address     String?
+  contact     String?
+  description String?
+  imageUrl    String?         @map("image_url")
+  lat         Float
+  lng         Float
+  category    ActivityCategory @default(other)
+  createdAt   DateTime        @default(now()) @map("created_at")
+  updatedAt   DateTime        @updatedAt @map("updated_at")
+  createdBy   String          @map("created_by")
+  map         Map             @relation(fields: [mapId], references: [id], onDelete: Cascade)
+  creator     User            @relation("ActivityCreator", fields: [createdBy], references: [id], onDelete: Cascade)
+
+  @@map("activities")
+}
