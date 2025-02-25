@@ -1,11 +1,12 @@
 "use client";
 import MapItemList from "../components/MapItemList";
-import Map, { Position } from "../components/Map";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { motion, AnimatePresence } from "framer-motion";
 import { Activity } from "../components/MapItemList";
 import { MapContainer } from "react-leaflet";
+import dynamic from "next/dynamic";
+import { Position } from "../components/Map";
 
 // Initial activities data
 const initialActivities: Activity[] = [
@@ -62,6 +63,10 @@ const initialActivities: Activity[] = [
     },
   },
 ];
+
+const Map = dynamic(() => import("../components/Map"), {
+  ssr: false,
+});
 
 const MapPage = () => {
   const [seeMapItems, setSeeMapItems] = useState(false);
