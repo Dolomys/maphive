@@ -78,7 +78,7 @@ export const CreateActivityModal = ({ trigger }: CreateActivityModalProps) => {
       }}
     >
       <DialogTrigger asChild>{trigger}</DialogTrigger>
-      <DialogContent className="sm:max-w-[725px]">
+      <DialogContent className="sm:max-w-[725px] max-h-[90vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle>Add New Spot</DialogTitle>
         </DialogHeader>
