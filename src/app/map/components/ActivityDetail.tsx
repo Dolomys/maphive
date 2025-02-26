@@ -15,7 +15,7 @@ interface ActivityDetailProps {
   onBack: () => void;
 }
 
-const ActivityDetail = ({ activity }: ActivityDetailProps) => {
+const ActivityDetail = ({ activity, onBack }: ActivityDetailProps) => {
   const isMobile = useMediaQuery("(max-width: 768px)");
 
   if (!activity) return null;
@@ -113,7 +113,13 @@ const ActivityDetail = ({ activity }: ActivityDetailProps) => {
 
   if (isMobile) {
     return (
-      <Sheet open={true} onOpenChange={() => {}}>
+      <Sheet
+        open={true}
+        onOpenChange={(e) => {
+          console.log(e);
+          onBack();
+        }}
+      >
         <SheetTitle>{activity.title}</SheetTitle>
         <SheetContent side="bottom" className="h-[80vh] overflow-y-auto">
           <h1 className="text-3xl font-bold bg-gradient-to-r from-primary to-primary/80 bg-clip-text text-transparent">
