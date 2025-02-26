@@ -1,7 +1,6 @@
 "use client";
 import MapItemList from "./components/MapItemList";
 import { useState } from "react";
-import { Button } from "@/components/ui/button";
 import { motion, AnimatePresence } from "framer-motion";
 import dynamic from "next/dynamic";
 import { useActivities } from "./hooks/useActivities";
@@ -16,38 +15,26 @@ const MapContainer = dynamic(() => import("react-leaflet").then((mod) => mod.Map
 });
 
 const MapPage = () => {
-  const [seeMapItems, setSeeMapItems] = useState(false);
   const [selectedActivity, setSelectedActivity] = useState<Activity | null>(null);
   const { activities } = useActivities();
 
   return (
     <div className="container mx-auto h-full relative">
-      <div className="absolute top-4 right-4" style={{ zIndex: 2 }}>
-        <Button
-          onClick={() => {
-            setSeeMapItems(!seeMapItems);
-          }}
-        >
-          {seeMapItems ? "Hide map items" : "Show map items"}
-        </Button>
-      </div>
       <div className="flex h-full gap-5">
         <AnimatePresence>
-          {seeMapItems && (
-            <motion.div
-              initial={{ opacity: 0, x: -300 }}
-              animate={{ opacity: 1, x: 0 }}
-              exit={{ opacity: 0, x: -300 }}
-              transition={{ duration: 0.3 }}
-              className={`${selectedActivity ? "w-2/4" : "w-[400px]"} h-full overflow-y-auto z-10`}
-            >
-              <MapItemList
-                selectedActivity={selectedActivity}
-                setSelectedActivity={setSelectedActivity}
-                activities={activities || []}
-              />
-            </motion.div>
-          )}
+          <motion.div
+            initial={{ opacity: 0, x: -300 }}
+            animate={{ opacity: 1, x: 0 }}
+            exit={{ opacity: 0, x: -300 }}
+            transition={{ duration: 0.3 }}
+            className={`${selectedActivity ? "w-2/4" : "w-[400px]"} h-full overflow-y-auto z-10`}
+          >
+            <MapItemList
+              selectedActivity={selectedActivity}
+              setSelectedActivity={setSelectedActivity}
+              activities={activities || []}
+            />
+          </motion.div>
         </AnimatePresence>
         <motion.div layout transition={{ duration: 0.3 }} className="flex-1 h-full">
           <div className="rounded-2xl overflow-hidden relative h-[900px] w-full">
@@ -65,7 +52,7 @@ const MapPage = () => {
                 activities={activities || []}
                 setSelectedActivity={setSelectedActivity}
                 selectedActivity={selectedActivity}
-                resizeMap={seeMapItems}
+                resizeMap={!!selectedActivity}
               />
             </MapContainer>
           </div>
