@@ -4,7 +4,7 @@ import { PlusIcon } from "lucide-react";
 import { CreateActivityModal } from "./CreateActivityModal";
 import { Activity } from "../models/activity";
 import ActivityDetail from "./ActivityDetail";
-
+import { useAuth } from "@/app/(auth)/hooks/useAuth";
 interface MapItemListProps {
   activities: Activity[];
   selectedActivity: Activity | null;
@@ -15,6 +15,7 @@ const MapItemList = ({ activities, selectedActivity, setSelectedActivity }: MapI
   const handleActivityClick = (activity: Activity) => {
     setSelectedActivity(activity);
   };
+  const { user } = useAuth();
 
   const handleBack = () => {
     setSelectedActivity(null);
@@ -26,13 +27,15 @@ const MapItemList = ({ activities, selectedActivity, setSelectedActivity }: MapI
 
   return (
     <div className="flex flex-col gap-4 p-4">
-      <CreateActivityModal
-        trigger={
-          <Button size="sm">
-            <PlusIcon className="w-6 h-6 mr-2" /> Suggest a Spot
-          </Button>
-        }
-      />
+      {user && (
+        <CreateActivityModal
+          trigger={
+            <Button size="sm">
+              <PlusIcon className="w-6 h-6 mr-2" /> Suggest a Spot
+            </Button>
+          }
+        />
+      )}
       <div className="space-y-4 mt-4 overflow-y-auto" style={{ maxHeight: "850px" }}>
         {activities.map((activity) => (
           <MapItem key={activity.id} activity={activity} onItemClick={() => handleActivityClick(activity)} />

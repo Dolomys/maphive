@@ -16,7 +16,6 @@ export function useAuth() {
       if (error) throw error;
       return data.user?.user_metadata;
     },
-    staleTime: Infinity,
   });
 
   const loginMutation = useMutation({

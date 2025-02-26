@@ -5,7 +5,6 @@ import { useAuth } from "@/app/(auth)/hooks/useAuth";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
-import Link from "next/link";
 
 export default function LoginPage() {
   const [email, setEmail] = useState("");
@@ -58,12 +57,12 @@ export default function LoginPage() {
             <Button type="submit" className="w-full" disabled={isLoggingIn}>
               {isLoggingIn ? "Signing in..." : "Sign in"}
             </Button>
-            <p className="text-sm text-center">
+            {/* <p className="text-sm text-center">
               Don&apos;t have an account?{" "}
               <Link href="/register" className="text-primary hover:underline">
                 Sign up
               </Link>
-            </p>
+            </p> */}
           </CardFooter>
         </form>
       </Card>
