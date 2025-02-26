@@ -5,6 +5,10 @@ import { motion, AnimatePresence } from "framer-motion";
 import dynamic from "next/dynamic";
 import { useActivities } from "./hooks/useActivities";
 import { Activity } from "./models/activity";
+import { LYON_CENTER, LYON_ZOOM } from "@/utils/const";
+import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
+import { useMediaQuery } from "@/hooks/useMediaQuery";
+import { MapIcon, ListIcon } from "lucide-react";
 
 const Map = dynamic(() => import("./components/Map"), {
   ssr: false,
@@ -17,47 +21,80 @@ const MapContainer = dynamic(() => import("react-leaflet").then((mod) => mod.Map
 const MapPage = () => {
   const [selectedActivity, setSelectedActivity] = useState<Activity | null>(null);
   const { activities } = useActivities();
+  const isMobile = useMediaQuery("(max-width: 768px)");
+  const [activeTab, setActiveTab] = useState<string>("list");
+
+  const mapContent = (
+    <motion.div layout transition={{ duration: 0.3 }} className="flex-1 h-full">
+      <div className="rounded-2xl overflow-hidden relative h-[calc(100vh-64px)]">
+        <MapContainer
+          zoomControl={false}
+          style={{
+            height: "100%",
+            width: "100%",
+            zIndex: 1,
+          }}
+          center={LYON_CENTER}
+          zoom={LYON_ZOOM}
+        >
+          <Map
+            activities={activities || []}
+            setSelectedActivity={setSelectedActivity}
+            selectedActivity={selectedActivity}
+            resizeMap={!!selectedActivity}
+          />
+        </MapContainer>
+      </div>
+    </motion.div>
+  );
+
+  const listContent = (
+    <AnimatePresence>
+      <motion.div
+        initial={{ opacity: 0, x: -300 }}
+        animate={{ opacity: 1, x: 0 }}
+        exit={{ opacity: 0, x: -300 }}
+        transition={{ duration: 0.3 }}
+        className={`${
+          selectedActivity ? (isMobile ? "w-full" : "w-2/4") : isMobile ? "w-full" : "w-[400px]"
+        } h-full overflow-y-auto z-10`}
+      >
+        <MapItemList
+          selectedActivity={selectedActivity}
+          setSelectedActivity={setSelectedActivity}
+          activities={activities || []}
+        />
+      </motion.div>
+    </AnimatePresence>
+  );
 
   return (
     <div className="container mx-auto h-full relative">
-      <div className="flex h-full gap-5">
-        <AnimatePresence>
-          <motion.div
-            initial={{ opacity: 0, x: -300 }}
-            animate={{ opacity: 1, x: 0 }}
-            exit={{ opacity: 0, x: -300 }}
-            transition={{ duration: 0.3 }}
-            className={`${selectedActivity ? "w-2/4" : "w-[400px]"} h-full overflow-y-auto z-10`}
-          >
-            <MapItemList
-              selectedActivity={selectedActivity}
-              setSelectedActivity={setSelectedActivity}
-              activities={activities || []}
-            />
-          </motion.div>
-        </AnimatePresence>
-        <motion.div layout transition={{ duration: 0.3 }} className="flex-1 h-full">
-          <div className="rounded-2xl overflow-hidden relative h-[900px] w-full">
-            <MapContainer
-              zoomControl={false}
-              style={{
-                height: "900px",
-                width: "100%",
-                zIndex: 1,
-              }}
-              center={[43.2965, 5.3698]} // Centered on Marseille
-              zoom={13}
-            >
-              <Map
-                activities={activities || []}
-                setSelectedActivity={setSelectedActivity}
-                selectedActivity={selectedActivity}
-                resizeMap={!!selectedActivity}
-              />
-            </MapContainer>
-          </div>
-        </motion.div>
-      </div>
+      {isMobile ? (
+        <div className="flex flex-col h-full">
+          <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
+            <TabsList className="grid w-full grid-cols-2 mb-4">
+              <TabsTrigger value="list" className="flex items-center gap-2">
+                <ListIcon className="w-4 h-4" /> Liste
+              </TabsTrigger>
+              <TabsTrigger value="map" className="flex items-center gap-2">
+                <MapIcon className="w-4 h-4" /> Carte
+              </TabsTrigger>
+            </TabsList>
+            <TabsContent value="list" className="mt-0">
+              {listContent}
+            </TabsContent>
+            <TabsContent value="map" className="mt-0">
+              {mapContent}
+            </TabsContent>
+          </Tabs>
+        </div>
+      ) : (
+        <div className="flex h-full gap-5">
+          {listContent}
+          {mapContent}
+        </div>
+      )}
     </div>
   );
 };

@@ -26,8 +26,6 @@ export const createActivity = authActionClient
             street: adress.street,
             city: adress.city,
             zip: adress.zip,
-            state: adress.state,
-            country: adress.country,
             latitude: adress.latitude,
             longitude: adress.longitude,
           },

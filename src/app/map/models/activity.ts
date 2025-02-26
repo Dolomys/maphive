@@ -15,8 +15,6 @@ export const CreateActivitySchema = z.object({
     street: z.string(),
     city: z.string(),
     zip: z.string(),
-    state: z.string(),
-    country: z.string(),
     latitude: z.number(),
     longitude: z.number(),
   }),

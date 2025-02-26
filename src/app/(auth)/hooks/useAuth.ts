@@ -16,6 +16,10 @@ export function useAuth() {
       if (error) throw error;
       return data.user?.user_metadata;
     },
+    staleTime: 0,
+    gcTime: 0,
+    refetchOnMount: true,
+    refetchOnWindowFocus: true,
   });
 
   const loginMutation = useMutation({
@@ -48,7 +52,8 @@ export function useAuth() {
       return result?.data;
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["session"] });
+      queryClient.clear();
+      queryClient.resetQueries();
       router.push("/login");
     },
   });

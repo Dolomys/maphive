@@ -11,6 +11,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { cn } from "@/lib/utils";
 import { toast } from "sonner";
 import dynamic from "next/dynamic";
+import { LYON_CENTER } from "@/utils/const";
 
 const SelectLocationMap = dynamic(() => import("./SelectLocationMap"), {
   ssr: false,
@@ -33,8 +34,6 @@ export const CreateActivityModal = ({ trigger }: CreateActivityModalProps) => {
         street: "",
         city: "",
         zip: "",
-        state: "",
-        country: "",
         latitude: 0,
         longitude: 0,
       },
@@ -78,9 +77,9 @@ export const CreateActivityModal = ({ trigger }: CreateActivityModalProps) => {
       }}
     >
       <DialogTrigger asChild>{trigger}</DialogTrigger>
-      <DialogContent className="sm:max-w-[725px] max-h-[90vh] overflow-y-auto">
+      <DialogContent className="sm:max-w-[725px] max-h-[70dvh] md:max-h-[90vh] overflow-y-auto">
         <DialogHeader>
-          <DialogTitle>Add New Spot</DialogTitle>
+          <DialogTitle>Ajouter un lieu</DialogTitle>
         </DialogHeader>
         <form onSubmit={form.handleSubmit(onSubmit, onError)} className="space-y-4">
           <div className="space-y-2">
@@ -88,13 +87,13 @@ export const CreateActivityModal = ({ trigger }: CreateActivityModalProps) => {
               htmlFor="title"
               className={cn("flex items-baseline gap-2", form.formState.errors.title && "text-red-500")}
             >
-              <span>Title</span>
+              <span>Titre</span>
               <span className="text-sm text-red-500">*</span>
             </Label>
             <Input
               id="title"
               {...form.register("title")}
-              placeholder="Enter title"
+              placeholder="Entrer le titre"
               className={cn(form.formState.errors.title && "border-red-500")}
               aria-invalid={!!form.formState.errors.title}
             />
@@ -107,7 +106,7 @@ export const CreateActivityModal = ({ trigger }: CreateActivityModalProps) => {
             <Input
               id="subtitle"
               {...form.register("subtitle")}
-              placeholder="Enter subtitle"
+              placeholder="Entrer le sous-titre"
               className={cn(form.formState.errors.subtitle && "border-red-500")}
               aria-invalid={!!form.formState.errors.subtitle}
             />
@@ -120,13 +119,13 @@ export const CreateActivityModal = ({ trigger }: CreateActivityModalProps) => {
               htmlFor="street"
               className={cn("flex items-baseline gap-2", form.formState.errors.adress?.street && "text-red-500")}
             >
-              <span>Street Address</span>
+              <span>Adresse</span>
               <span className="text-sm text-red-500">*</span>
             </Label>
             <Input
               id="street"
               {...form.register("adress.street")}
-              placeholder="Enter street address"
+              placeholder="Entrer l'adresse"
               className={cn(form.formState.errors.adress?.street && "border-red-500")}
               aria-invalid={!!form.formState.errors.adress?.street}
             />
@@ -140,13 +139,13 @@ export const CreateActivityModal = ({ trigger }: CreateActivityModalProps) => {
                 htmlFor="city"
                 className={cn("flex items-baseline gap-2", form.formState.errors.adress?.city && "text-red-500")}
               >
-                <span>City</span>
+                <span>Ville</span>
                 <span className="text-sm text-red-500">*</span>
               </Label>
               <Input
                 id="city"
                 {...form.register("adress.city")}
-                placeholder="Enter city"
+                placeholder="Entrer la ville"
                 className={cn(form.formState.errors.adress?.city && "border-red-500")}
                 aria-invalid={!!form.formState.errors.adress?.city}
               />
@@ -159,13 +158,13 @@ export const CreateActivityModal = ({ trigger }: CreateActivityModalProps) => {
                 htmlFor="zip"
                 className={cn("flex items-baseline gap-2", form.formState.errors.adress?.zip && "text-red-500")}
               >
-                <span>ZIP Code</span>
+                <span>Code postal</span>
                 <span className="text-sm text-red-500">*</span>
               </Label>
               <Input
                 id="zip"
                 {...form.register("adress.zip")}
-                placeholder="Enter ZIP code"
+                placeholder="Entrer le code postal"
                 className={cn(form.formState.errors.adress?.zip && "border-red-500")}
                 aria-invalid={!!form.formState.errors.adress?.zip}
               />
@@ -174,61 +173,22 @@ export const CreateActivityModal = ({ trigger }: CreateActivityModalProps) => {
               )}
             </div>
           </div>
-          <div className="grid grid-cols-2 gap-4">
-            <div className="space-y-2">
-              <Label
-                htmlFor="state"
-                className={cn("flex items-baseline gap-2", form.formState.errors.adress?.state && "text-red-500")}
-              >
-                <span>State</span>
-                <span className="text-sm text-red-500">*</span>
-              </Label>
-              <Input
-                id="state"
-                {...form.register("adress.state")}
-                placeholder="Enter state"
-                className={cn(form.formState.errors.adress?.state && "border-red-500")}
-                aria-invalid={!!form.formState.errors.adress?.state}
-              />
-              {form.formState.errors.adress?.state && (
-                <p className="text-sm text-red-500">{form.formState.errors.adress.state.message}</p>
-              )}
-            </div>
-            <div className="space-y-2">
-              <Label
-                htmlFor="country"
-                className={cn("flex items-baseline gap-2", form.formState.errors.adress?.country && "text-red-500")}
-              >
-                <span>Country</span>
-                <span className="text-sm text-red-500">*</span>
-              </Label>
-              <Input
-                id="country"
-                {...form.register("adress.country")}
-                placeholder="Enter country"
-                className={cn(form.formState.errors.adress?.country && "border-red-500")}
-                aria-invalid={!!form.formState.errors.adress?.country}
-              />
-              {form.formState.errors.adress?.country && (
-                <p className="text-sm text-red-500">{form.formState.errors.adress.country.message}</p>
-              )}
-            </div>
-          </div>
+
           <div className="space-y-2">
             <Label className="flex items-baseline gap-2">
-              <span>Location</span>
+              <span>Localisation</span>
               <span className="text-sm text-red-500">*</span>
-              <span className="text-sm text-muted-foreground">(Click on the map to set location)</span>
+              <span className="text-sm text-muted-foreground">(Cliquer sur la carte pour définir la localisation)</span>
             </Label>
             <div className="h-[300px] w-full border rounded-lg overflow-hidden">
               <SelectLocationMap
                 onLocationSelect={handleLocationSelect}
-                initialLatitude={form.getValues("adress.latitude")}
-                initialLongitude={form.getValues("adress.longitude")}
+                initialLatitude={LYON_CENTER.lat}
+                initialLongitude={LYON_CENTER.lng}
               />
             </div>
             <div className="text-sm text-muted-foreground">
-              Selected coordinates: {form.getValues("adress.latitude")}, {form.getValues("adress.longitude")}
+              Coordonnées sélectionnées: {form.getValues("adress.latitude")}, {form.getValues("adress.longitude")}
             </div>
           </div>
           <div className="space-y-2">
@@ -236,7 +196,7 @@ export const CreateActivityModal = ({ trigger }: CreateActivityModalProps) => {
             <Input
               id="contact"
               {...form.register("contact")}
-              placeholder="Enter contact information"
+              placeholder="Entrer les informations de contact"
               className={cn(form.formState.errors.contact && "border-red-500")}
               aria-invalid={!!form.formState.errors.contact}
             />
@@ -249,7 +209,7 @@ export const CreateActivityModal = ({ trigger }: CreateActivityModalProps) => {
             <Textarea
               id="description"
               {...form.register("description")}
-              placeholder="Enter description"
+              placeholder="Entrer la description"
               className={cn(form.formState.errors.description && "border-red-500")}
               aria-invalid={!!form.formState.errors.description}
             />
@@ -266,10 +226,10 @@ export const CreateActivityModal = ({ trigger }: CreateActivityModalProps) => {
                 setOpen(false);
               }}
             >
-              Cancel
+              Annuler
             </Button>
             <Button type="submit" disabled={form.formState.isSubmitting || !form.formState.isValid}>
-              {form.formState.isSubmitting ? "Creating..." : "Create"}
+              {form.formState.isSubmitting ? "Création en cours..." : "Créer"}
             </Button>
           </div>
         </form>

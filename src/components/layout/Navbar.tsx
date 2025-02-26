@@ -7,7 +7,6 @@ import { NavigationMenu, NavigationMenuItem, NavigationMenuLink, NavigationMenuL
 import { Button } from "../ui/button";
 import Link from "next/link";
 import { ToggleTheme } from "./toggle-theme";
-import SearchInput from "../SearchInput";
 import { useAuth } from "@/app/(auth)/hooks/useAuth";
 import {
   DropdownMenu,
@@ -32,7 +31,6 @@ const routeList: RouteProps[] = [
 export const Navbar = () => {
   const [isOpen, setIsOpen] = React.useState(false);
   const { user, logout } = useAuth();
-  console.log("USER IN NAVBAR", user);
 
   const filteredRoutes = routeList.filter((route) => !route.authRequired || (route.authRequired && user));
 
@@ -45,9 +43,9 @@ export const Navbar = () => {
           <MapPinned className="bg-gradient-to-tr p-1 border-secondary from-primary via-primary/70 to-primary rounded-lg w-9 h-9 mr-2 border text-white" />
           MapHive
         </Link>
-        <div className="hidden lg:block">
+        {/* <div className="hidden lg:block">
           <SearchInput />
-        </div>
+        </div> */}
       </div>
 
       {/* Mobile */}

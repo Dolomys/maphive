@@ -72,7 +72,14 @@ export const signup = actionClient.schema(signupSchema).action(async ({ parsedIn
 export const logout = actionClient.action(async () => {
   const supabase = await createClient();
 
+  // Sign out and clear all local storage
   const { error } = await supabase.auth.signOut();
+
+  if (typeof window !== "undefined") {
+    // Clear any local storage items related to auth
+    localStorage.removeItem("supabase.auth.token");
+    // Clear any other auth-related items you might have
+  }
 
   return { success: !error };
 });

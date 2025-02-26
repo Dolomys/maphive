@@ -31,12 +31,12 @@ const MapItemList = ({ activities, selectedActivity, setSelectedActivity }: MapI
         <CreateActivityModal
           trigger={
             <Button size="sm">
-              <PlusIcon className="w-6 h-6 mr-2" /> Suggest a Spot
+              <PlusIcon className="w-6 h-6 mr-2" /> Ajouter un lieu
             </Button>
           }
         />
       )}
-      <div className="space-y-4 mt-4 overflow-y-auto" style={{ maxHeight: "850px" }}>
+      <div className="space-y-4 mt-4 overflow-y-auto max-h-[80vh] pb-4">
         {activities.map((activity) => (
           <MapItem key={activity.id} activity={activity} onItemClick={() => handleActivityClick(activity)} />
         ))}

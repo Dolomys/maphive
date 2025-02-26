@@ -23,12 +23,12 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="pt-br" suppressHydrationWarning>
-      <body className={cn("min-h-screen bg-background", inter.className)}>
+      <body className={cn("flex flex-col bg-background", inter.className)}>
         <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
           <ReactQueryProvider>
             <NuqsAdapter>
               <Navbar />
-              <main className="mt-[30px] w-full h-full">
+              <main className="mt-[30px] flex-1 w-full">
                 <Providers>{children}</Providers>
               </main>
               <Toaster />

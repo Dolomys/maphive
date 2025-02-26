@@ -49,9 +49,9 @@ model Address {
   id        String    @id @default(uuid())
   street    String
   city      String
-  state     String
+  state     String?
   zip       String
-  country   String
+  country   String?
   latitude  Float
   longitude Float
   

@@ -13,20 +13,23 @@ export const HeroSection = () => {
         <div className="text-center space-y-8">
           <div className="max-w-screen-md mx-auto text-center text-4xl md:text-6xl font-bold">
             <h1>
-              The Community Driven
-              <span className="text-transparent px-2 bg-gradient-to-r from-[#D247BF] to-primary bg-clip-text">Map</span>
-              App
+              🚀 La carte
+              <span className="text-transparent px-2 bg-gradient-to-r from-[#D247BF] to-primary bg-clip-text">
+                interactive,
+              </span>
+              par et pour ses utilisateurs
             </h1>
           </div>
 
           <p className="max-w-screen-sm mx-auto text-xl text-muted-foreground">
-            Discover and share hidden gems with our community-driven map—authentic spots powered by real experiences.
+            🌍 Découvrez et partagez des pépites cachées avec notre map collaborative — des lieux authentiques, basés
+            sur de vraies expériences. ✨{" "}
           </p>
 
           <div className="space-y-4 md:space-y-0 md:space-x-4">
             <Link href="/map">
               <Button className="w-5/6 md:w-1/4 font-bold group/arrow">
-                See the map
+                Voir la carte
                 <ArrowRight className="size-5 ml-2 group-hover/arrow:translate-x-1 transition-transform" />
               </Button>
             </Link>
