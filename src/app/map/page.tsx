@@ -9,7 +9,6 @@ import { LYON_CENTER, LYON_ZOOM } from "@/utils/const";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { useMediaQuery } from "@/hooks/useMediaQuery";
 import { MapIcon, ListIcon, ArrowLeft } from "lucide-react";
-import { Sheet, SheetContent } from "@/components/ui/sheet";
 import ActivityDetail from "./components/ActivityDetail";
 import { Button } from "@/components/ui/button";
 
@@ -26,12 +25,10 @@ const MapPage = () => {
   const { activities } = useActivities();
   const isMobile = useMediaQuery("(max-width: 768px)");
   const [activeTab, setActiveTab] = useState<string>("list");
-  const [isSheetOpen, setIsSheetOpen] = useState(false);
 
   const handleActivitySelect = (activity: Activity | null) => {
     setSelectedActivity(activity);
     if (isMobile && activity) {
-      setIsSheetOpen(true);
       setActiveTab("map");
     }
   };
@@ -117,7 +114,6 @@ const MapPage = () => {
             <ActivityDetail
               activity={selectedActivity}
               onBack={() => {
-                setIsSheetOpen(false);
                 setSelectedActivity(null);
               }}
             />
