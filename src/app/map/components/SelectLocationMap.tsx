@@ -1,15 +1,8 @@
 import "leaflet/dist/leaflet.css";
 import { TileLayer, Marker, MapContainer, useMapEvents } from "react-leaflet";
-import { Icon } from "leaflet";
 import { useState } from "react";
 import { LYON_CENTER } from "@/utils/const";
-
-const customMarker = new Icon({
-  iconUrl: "https://unpkg.com/leaflet@1.9.3/dist/images/marker-icon.png",
-  iconSize: [25, 41],
-  iconAnchor: [12, 41],
-  popupAnchor: [0, -41],
-});
+import customMarker from "@/components/CustomMarker";
 
 interface SelectLocationMapProps {
   onLocationSelect: (lat: number, lng: number) => void;

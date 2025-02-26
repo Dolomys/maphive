@@ -1,15 +1,8 @@
 import "leaflet/dist/leaflet.css";
 import { TileLayer, Marker, Popup, useMap } from "react-leaflet";
-import { Icon } from "leaflet";
 import { useEffect } from "react";
 import { Activity } from "../models/activity";
-
-const customMarker = new Icon({
-  iconUrl: "https://unpkg.com/leaflet@1.9.3/dist/images/marker-icon.png",
-  iconSize: [25, 41],
-  iconAnchor: [12, 41],
-  popupAnchor: [0, -41],
-});
+import customMarker from "@/components/CustomMarker";
 
 export type Position = {
   lat: number;
