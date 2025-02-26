@@ -7,6 +7,7 @@ import { Navbar } from "@/components/layout/Navbar";
 import { NuqsAdapter } from "nuqs/adapters/next/app";
 import { Providers } from "./providers";
 import ReactQueryProvider from "@/components/providers/ReactQueryProvider";
+import { Toaster } from "sonner";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -30,6 +31,7 @@ export default function RootLayout({
               <main className="mt-[30px] w-full h-full">
                 <Providers>{children}</Providers>
               </main>
+              <Toaster />
             </NuqsAdapter>
           </ReactQueryProvider>
         </ThemeProvider>

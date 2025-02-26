@@ -1,6 +1,6 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Activity } from "./MapItemList";
 import { MapPinIcon, AtSign } from "lucide-react";
+import { Activity } from "../models/activity";
 
 interface MapItemProps {
   activity: Activity;
@@ -23,7 +23,7 @@ export const MapItem = ({ activity, onItemClick }: MapItemProps) => {
       <CardContent className="space-y-2">
         <div className="flex items-center gap-2 text-sm">
           <MapPinIcon className="w-4 h-4" />
-          <span>{activity.address}</span>
+          <span>{activity.address?.street}</span>
         </div>
         <div className="flex items-center gap-2 text-sm">
           <AtSign className="w-4 h-4" />

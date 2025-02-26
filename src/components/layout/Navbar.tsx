@@ -8,7 +8,7 @@ import { Button } from "../ui/button";
 import Link from "next/link";
 import { ToggleTheme } from "./toggle-theme";
 import SearchInput from "../SearchInput";
-import { useAuth } from "@/hooks/useAuth";
+import { useAuth } from "@/app/(auth)/hooks/useAuth";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -31,8 +31,8 @@ const routeList: RouteProps[] = [
 
 export const Navbar = () => {
   const [isOpen, setIsOpen] = React.useState(false);
-  const { session, logout } = useAuth();
-  const user = session?.user;
+  const { user, logout } = useAuth();
+  console.log("USER IN NAVBAR", user);
 
   const filteredRoutes = routeList.filter((route) => !route.authRequired || (route.authRequired && user));
 

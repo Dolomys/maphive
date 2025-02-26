@@ -1,0 +1,81 @@
+"use server";
+
+import { prisma } from "@/lib/prisma";
+import { actionClient } from "@/lib/safe-actions";
+import { createClient } from "@/lib/supabase/server";
+import { z } from "zod";
+
+const loginSchema = z.object({
+  email: z.string().email(),
+  password: z.string().min(6),
+});
+
+export const login = actionClient.schema(loginSchema).action(async ({ parsedInput: { email, password } }) => {
+  const supabase = await createClient();
+
+  const { error } = await supabase.auth.signInWithPassword({
+    email,
+    password,
+  });
+
+  if (error) {
+    return {
+      success: false,
+      error: error.message,
+    };
+  }
+
+  return {
+    success: true,
+  };
+});
+
+const signupSchema = z.object({
+  email: z.string().email(),
+  password: z.string().min(6),
+  name: z.string(),
+});
+
+export const signup = actionClient.schema(signupSchema).action(async ({ parsedInput: { email, password, name } }) => {
+  const supabase = await createClient();
+
+  const { data, error } = await supabase.auth.signUp({
+    email,
+    password,
+    options: {
+      data: {
+        name,
+      },
+    },
+  });
+  console.log("USER SIGNUP");
+
+  if (data.user?.email && data.user?.user_metadata?.name) {
+    console.log("£USER CREATED");
+    const user = await prisma.user.create({
+      data: {
+        id: data.user?.id,
+        email: data.user?.email,
+        name: data.user?.user_metadata?.name,
+        emailVerified: data.user?.email_confirmed_at,
+      },
+    });
+    console.log("USER CREATED", user);
+    return {
+      success: true,
+    };
+  }
+
+  return {
+    success: false,
+    error: error?.message ?? "Something went wrong",
+  };
+});
+
+export const logout = actionClient.action(async () => {
+  const supabase = await createClient();
+
+  const { error } = await supabase.auth.signOut();
+
+  return { success: !error };
+});

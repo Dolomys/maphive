@@ -1,8 +1,8 @@
 import "leaflet/dist/leaflet.css";
 import { TileLayer, Marker, Popup, useMap } from "react-leaflet";
 import { Icon } from "leaflet";
-import { Activity } from "./MapItemList";
 import { useEffect } from "react";
+import { Activity } from "../models/activity";
 
 const customMarker = new Icon({
   iconUrl: "https://unpkg.com/leaflet@1.9.3/dist/images/marker-icon.png",
@@ -49,24 +49,28 @@ const Map = ({ activities = [], selectedMarker, resizeMap = false }: MapProps) =
   return (
     <>
       <TileLayer zIndex={1} attribution="Google Maps" url="https://tile.osm.ch/switzerland/{z}/{x}/{y}.png" />
-      {activities.map((activity) => (
-        <Marker
-          key={activity.id}
-          position={[activity.coordinates.lat, activity.coordinates.lng]}
-          icon={customMarker}
-          eventHandlers={{
-            click: () => handleZoomToMarker(activity.coordinates.lat, activity.coordinates.lng),
-          }}
-        >
-          <Popup>
-            <div className="p-2">
-              <h3 className="font-bold">{activity.title}</h3>
-              <p className="text-sm text-muted-foreground">{activity.subtitle}</p>
-              <p className="text-sm mt-2">{activity.address}</p>
-            </div>
-          </Popup>
-        </Marker>
-      ))}
+      {activities.map((activity) => {
+        if (!activity.address) return null;
+        return (
+          <Marker
+            key={activity.id}
+            position={[activity.address.latitude, activity.address.longitude]}
+            icon={customMarker}
+            eventHandlers={{
+              click: () =>
+                activity.address && handleZoomToMarker(activity.address.latitude, activity.address.longitude),
+            }}
+          >
+            <Popup>
+              <div className="p-2">
+                <h3 className="font-bold">{activity.title}</h3>
+                <p className="text-sm text-muted-foreground">{activity.subtitle}</p>
+                <p className="text-sm mt-2">{activity.address.street}</p>
+              </div>
+            </Popup>
+          </Marker>
+        );
+      })}
     </>
   );
 };

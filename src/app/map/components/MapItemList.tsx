@@ -3,32 +3,17 @@ import { MapItem } from "./MapItem";
 import { PlusIcon } from "lucide-react";
 import { CreateActivityModal } from "./CreateActivityModal";
 import { Position } from "./Map";
-
-export type Activity = {
-  id: string;
-  title: string;
-  subtitle: string;
-  address: string;
-  contact: string;
-  description: string;
-  imageUrl?: string;
-  coordinates: {
-    lat: number;
-    lng: number;
-  };
-};
+import { Activity } from "../models/activity";
 
 interface MapItemListProps {
   activities: Activity[];
-  onCreateActivity: (newActivity: Omit<Activity, "id">) => void;
-  setSelectedMarker: (marker: Position) => void;
+  setSelectedMarker: (position: Position | undefined) => void;
 }
 
-const MapItemList = ({ activities, onCreateActivity, setSelectedMarker }: MapItemListProps) => {
+const MapItemList = ({ activities, setSelectedMarker }: MapItemListProps) => {
   return (
     <div className="flex flex-col gap-4 p-4">
       <CreateActivityModal
-        onSubmit={onCreateActivity}
         trigger={
           <Button size="sm">
             <PlusIcon className="w-6 h-6 mr-2" /> Suggest a Spot
@@ -40,7 +25,9 @@ const MapItemList = ({ activities, onCreateActivity, setSelectedMarker }: MapIte
           <MapItem
             key={activity.id}
             activity={activity}
-            onItemClick={() => setSelectedMarker({ lat: activity.coordinates.lat, lng: activity.coordinates.lng })}
+            onItemClick={() =>
+              activity.address && setSelectedMarker({ lat: activity.address.latitude, lng: activity.address.longitude })
+            }
           />
         ))}
       </div>
