@@ -18,11 +18,12 @@ export type Position = {
 
 interface MapProps {
   activities?: Activity[];
-  selectedMarker?: Position;
+  selectedActivity?: Activity | null;
+  setSelectedActivity?: (activity: Activity | null) => void;
   resizeMap?: boolean;
 }
 
-const Map = ({ activities = [], selectedMarker, resizeMap = false }: MapProps) => {
+const Map = ({ activities = [], selectedActivity, setSelectedActivity, resizeMap = false }: MapProps) => {
   const map = useMap();
 
   useEffect(() => {
@@ -32,12 +33,12 @@ const Map = ({ activities = [], selectedMarker, resizeMap = false }: MapProps) =
   }, [resizeMap, map]);
 
   useEffect(() => {
-    if (selectedMarker) {
-      map.flyTo([selectedMarker.lat, selectedMarker.lng], 16, {
+    if (selectedActivity && selectedActivity.address) {
+      map.flyTo([selectedActivity.address.latitude, selectedActivity.address.longitude], 16, {
         duration: 1.5,
       });
     }
-  }, [selectedMarker, map]);
+  }, [selectedActivity, map]);
 
   const handleZoomToMarker = (lat: number, lng: number) => {
     map.flyTo([lat, lng], 16, {
@@ -57,8 +58,12 @@ const Map = ({ activities = [], selectedMarker, resizeMap = false }: MapProps) =
             position={[activity.address.latitude, activity.address.longitude]}
             icon={customMarker}
             eventHandlers={{
-              click: () =>
-                activity.address && handleZoomToMarker(activity.address.latitude, activity.address.longitude),
+              click: () => {
+                if (activity.address) {
+                  handleZoomToMarker(activity.address.latitude, activity.address.longitude);
+                  setSelectedActivity?.(activity);
+                }
+              },
             }}
           >
             <Popup>

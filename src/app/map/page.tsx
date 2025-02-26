@@ -4,8 +4,8 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { motion, AnimatePresence } from "framer-motion";
 import dynamic from "next/dynamic";
-import { Position } from "./components/Map";
 import { useActivities } from "./hooks/useActivities";
+import { Activity } from "./models/activity";
 
 const Map = dynamic(() => import("./components/Map"), {
   ssr: false,
@@ -17,21 +17,11 @@ const MapContainer = dynamic(() => import("react-leaflet").then((mod) => mod.Map
 
 const MapPage = () => {
   const [seeMapItems, setSeeMapItems] = useState(false);
-  const [selectedMarker, setSelectedMarker] = useState<Position | undefined>(undefined);
-  const { activities, isLoading } = useActivities();
-
-  console.log("ACTIVITIES", activities);
-
-  if (isLoading) {
-    return (
-      <div className="container mx-auto h-full flex items-center justify-center">
-        <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-gray-900" />
-      </div>
-    );
-  }
+  const [selectedActivity, setSelectedActivity] = useState<Activity | null>(null);
+  const { activities } = useActivities();
 
   return (
-    <div className="container mx-auto h-full relative ">
+    <div className="container mx-auto h-full relative">
       <div className="absolute top-4 right-4" style={{ zIndex: 2 }}>
         <Button
           onClick={() => {
@@ -49,9 +39,13 @@ const MapPage = () => {
               animate={{ opacity: 1, x: 0 }}
               exit={{ opacity: 0, x: -300 }}
               transition={{ duration: 0.3 }}
-              className="w-[400px] h-full overflow-y-auto z-10"
+              className={`${selectedActivity ? "w-2/4" : "w-[400px]"} h-full overflow-y-auto z-10`}
             >
-              <MapItemList setSelectedMarker={setSelectedMarker} activities={activities || []} />
+              <MapItemList
+                selectedActivity={selectedActivity}
+                setSelectedActivity={setSelectedActivity}
+                activities={activities || []}
+              />
             </motion.div>
           )}
         </AnimatePresence>
@@ -67,7 +61,12 @@ const MapPage = () => {
               center={[43.2965, 5.3698]} // Centered on Marseille
               zoom={13}
             >
-              <Map activities={activities || []} selectedMarker={selectedMarker} resizeMap={seeMapItems} />
+              <Map
+                activities={activities || []}
+                setSelectedActivity={setSelectedActivity}
+                selectedActivity={selectedActivity}
+                resizeMap={seeMapItems}
+              />
             </MapContainer>
           </div>
         </motion.div>

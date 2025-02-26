@@ -48,11 +48,9 @@ export const signup = actionClient.schema(signupSchema).action(async ({ parsedIn
       },
     },
   });
-  console.log("USER SIGNUP");
 
   if (data.user?.email && data.user?.user_metadata?.name) {
-    console.log("£USER CREATED");
-    const user = await prisma.user.create({
+    await prisma.user.create({
       data: {
         id: data.user?.id,
         email: data.user?.email,
@@ -60,7 +58,6 @@ export const signup = actionClient.schema(signupSchema).action(async ({ parsedIn
         emailVerified: data.user?.email_confirmed_at,
       },
     });
-    console.log("USER CREATED", user);
     return {
       success: true,
     };

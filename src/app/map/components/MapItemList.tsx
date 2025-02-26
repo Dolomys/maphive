@@ -2,15 +2,28 @@ import { Button } from "@/components/ui/button";
 import { MapItem } from "./MapItem";
 import { PlusIcon } from "lucide-react";
 import { CreateActivityModal } from "./CreateActivityModal";
-import { Position } from "./Map";
 import { Activity } from "../models/activity";
+import ActivityDetail from "./ActivityDetail";
 
 interface MapItemListProps {
   activities: Activity[];
-  setSelectedMarker: (position: Position | undefined) => void;
+  selectedActivity: Activity | null;
+  setSelectedActivity: (activity: Activity | null) => void;
 }
 
-const MapItemList = ({ activities, setSelectedMarker }: MapItemListProps) => {
+const MapItemList = ({ activities, selectedActivity, setSelectedActivity }: MapItemListProps) => {
+  const handleActivityClick = (activity: Activity) => {
+    setSelectedActivity(activity);
+  };
+
+  const handleBack = () => {
+    setSelectedActivity(null);
+  };
+
+  if (selectedActivity) {
+    return <ActivityDetail activity={selectedActivity} onBack={handleBack} />;
+  }
+
   return (
     <div className="flex flex-col gap-4 p-4">
       <CreateActivityModal
@@ -22,13 +35,7 @@ const MapItemList = ({ activities, setSelectedMarker }: MapItemListProps) => {
       />
       <div className="space-y-4 mt-4 overflow-y-auto" style={{ maxHeight: "850px" }}>
         {activities.map((activity) => (
-          <MapItem
-            key={activity.id}
-            activity={activity}
-            onItemClick={() =>
-              activity.address && setSelectedMarker({ lat: activity.address.latitude, lng: activity.address.longitude })
-            }
-          />
+          <MapItem key={activity.id} activity={activity} onItemClick={() => handleActivityClick(activity)} />
         ))}
       </div>
     </div>
