@@ -36,6 +36,7 @@ const MapItemList = ({ activities, selectedActivity, setSelectedActivity }: MapI
           }
         />
       )}
+
       <div className="space-y-4 mt-4 overflow-y-auto max-h-[80vh] pb-4">
         {activities.map((activity) => (
           <MapItem key={activity.id} activity={activity} onItemClick={() => handleActivityClick(activity)} />

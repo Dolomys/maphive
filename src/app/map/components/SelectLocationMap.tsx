@@ -2,6 +2,7 @@ import "leaflet/dist/leaflet.css";
 import { TileLayer, Marker, MapContainer, useMapEvents } from "react-leaflet";
 import { Icon } from "leaflet";
 import { useState } from "react";
+import { LYON_CENTER } from "@/utils/const";
 
 const customMarker = new Icon({
   iconUrl: "https://unpkg.com/leaflet@1.9.3/dist/images/marker-icon.png",
@@ -44,7 +45,7 @@ const SelectLocationMap = ({ onLocationSelect, initialLatitude, initialLongitude
 
   return (
     <MapContainer
-      center={position || [43.2965, 5.3698]} // Default to Marseille if no position
+      center={position || LYON_CENTER} // Default to Marseille if no position
       zoom={13}
       style={{ height: "100%", width: "100%", borderRadius: "0.5rem" }}
       scrollWheelZoom={true}

@@ -26,7 +26,7 @@ export const MapItem = ({ activity, onItemClick }: MapItemProps) => {
       <CardContent className="space-y-2 pb-4">
         <div className="flex items-center gap-2 text-sm">
           <MapPinIcon className="w-4 h-4" />
-          <span>{activity.address?.street}</span>
+          <span>{`${activity.address?.street}, ${activity.address?.city}`}</span>
         </div>
         <div className="flex items-center gap-2 text-sm">
           <AtSign className="w-4 h-4" />

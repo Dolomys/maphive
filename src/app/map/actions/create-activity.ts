@@ -8,7 +8,6 @@ export const createActivity = authActionClient
   .metadata({ name: "create-activity" })
   .schema(CreateActivitySchema)
   .action(async ({ parsedInput: { title, subtitle, description, adress, contact }, ctx: { user } }) => {
-    console.log("CREATE ACTIVITY", title, subtitle, description, adress, contact);
     const activity = await prisma.activity.create({
       data: {
         title,

@@ -17,30 +17,27 @@ interface SmallMapProps {
 
 const MapContent = ({ latitude, longitude }: { latitude: number; longitude: number }) => {
   const map = useMap();
-
-  // Center the map on the marker when it mounts
   map.setView([latitude, longitude], 15);
-
   return (
     <>
-      <TileLayer zIndex={1} attribution="Google Maps" url="https://tile.osm.ch/switzerland/{z}/{x}/{y}.png" />
       <Marker position={[latitude, longitude]} icon={customMarker} />
     </>
   );
 };
 
-const SmallMap = ({ latitude, longitude, className }: SmallMapProps) => {
+const SmallMap = ({ latitude, longitude }: SmallMapProps) => {
   return (
-    <div className={className}>
-      <MapContainer
-        style={{ height: "100%", width: "100%", borderRadius: "0.5rem" }}
-        zoomControl={false}
-        scrollWheelZoom={false}
-        dragging={false}
-      >
-        <MapContent latitude={latitude} longitude={longitude} />
-      </MapContainer>
-    </div>
+    <MapContainer
+      style={{ height: "100%", width: "100%", borderRadius: "0.5rem" }}
+      center={[latitude, longitude]}
+      zoom={15}
+      //   zoomControl={false}
+      //   scrollWheelZoom={false}
+      //   dragging={false}
+    >
+      <TileLayer zIndex={1} attribution="Google Maps" url="https://tile.osm.ch/switzerland/{z}/{x}/{y}.png" />
+      <MapContent latitude={latitude} longitude={longitude} />
+    </MapContainer>
   );
 };
 
