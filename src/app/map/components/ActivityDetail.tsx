@@ -115,7 +115,7 @@ const ActivityDetail = ({ activity }: ActivityDetailProps) => {
     return (
       <Sheet open={true} onOpenChange={() => {}}>
         <SheetTitle>{activity.title}</SheetTitle>
-        <SheetContent side="bottom" className="h-[80vh]">
+        <SheetContent side="bottom" className="h-[80vh] overflow-y-auto">
           <h1 className="text-3xl font-bold bg-gradient-to-r from-primary to-primary/80 bg-clip-text text-transparent">
             {activity.title}
           </h1>
