@@ -1,6 +1,6 @@
 import { Activity } from "../models/activity";
 import { Button } from "@/components/ui/button";
-import { ArrowLeft } from "lucide-react";
+import { ArrowLeft, MapPin } from "lucide-react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import Image from "next/image";
 
@@ -35,12 +35,17 @@ const ActivityDetail = ({ activity, onBack }: ActivityDetailProps) => {
               </p>
             </div>
             <div>
-              <h3 className="font-semibold text-lg mb-2">Location</h3>
+              <h3 className="font-semibold text-lg mb-2 flex items-center gap-2">
+                <MapPin className="w-5 h-5" />
+                Location
+              </h3>
               {activity.address && (
-                <div className="space-y-1">
-                  <p>{activity.address.street}</p>
-                  <p>{`${activity.address.city}, ${activity.address.state} ${activity.address.zip}`}</p>
-                  <p>{activity.address.country}</p>
+                <div className="space-y-4">
+                  <div className="space-y-1">
+                    <p>{activity.address.street}</p>
+                    <p>{`${activity.address.city}, ${activity.address.state} ${activity.address.zip}`}</p>
+                    <p>{activity.address.country}</p>
+                  </div>
                 </div>
               )}
             </div>

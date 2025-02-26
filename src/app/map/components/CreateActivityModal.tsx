@@ -10,6 +10,11 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { cn } from "@/lib/utils";
 import { toast } from "sonner";
+import dynamic from "next/dynamic";
+
+const SelectLocationMap = dynamic(() => import("./SelectLocationMap"), {
+  ssr: false,
+});
 
 interface CreateActivityModalProps {
   trigger: React.ReactNode;
@@ -38,7 +43,7 @@ export const CreateActivityModal = ({ trigger }: CreateActivityModalProps) => {
       type: "structure",
       imageUrl: "",
     },
-    mode: "onTouched", // Enable real-time validation as fields are touched
+    mode: "onTouched",
   });
 
   const onSubmit = async (data: CreateActivityInput) => {
@@ -57,6 +62,11 @@ export const CreateActivityModal = ({ trigger }: CreateActivityModalProps) => {
     toast.error("Please fix the errors before submitting");
   };
 
+  const handleLocationSelect = (lat: number, lng: number) => {
+    form.setValue("adress.latitude", lat);
+    form.setValue("adress.longitude", lng);
+  };
+
   return (
     <Dialog
       open={open}
@@ -68,7 +78,7 @@ export const CreateActivityModal = ({ trigger }: CreateActivityModalProps) => {
       }}
     >
       <DialogTrigger asChild>{trigger}</DialogTrigger>
-      <DialogContent className="sm:max-w-[425px]">
+      <DialogContent className="sm:max-w-[725px]">
         <DialogHeader>
           <DialogTitle>Add New Spot</DialogTitle>
         </DialogHeader>
@@ -204,48 +214,21 @@ export const CreateActivityModal = ({ trigger }: CreateActivityModalProps) => {
               )}
             </div>
           </div>
-          <div className="grid grid-cols-2 gap-4">
-            <div className="space-y-2">
-              <Label
-                htmlFor="latitude"
-                className={cn("flex items-baseline gap-2", form.formState.errors.adress?.latitude && "text-red-500")}
-              >
-                <span>Latitude</span>
-                <span className="text-sm text-red-500">*</span>
-              </Label>
-              <Input
-                id="latitude"
-                type="number"
-                step="0.0001"
-                {...form.register("adress.latitude", { valueAsNumber: true })}
-                placeholder="Enter latitude"
-                className={cn(form.formState.errors.adress?.latitude && "border-red-500")}
-                aria-invalid={!!form.formState.errors.adress?.latitude}
+          <div className="space-y-2">
+            <Label className="flex items-baseline gap-2">
+              <span>Location</span>
+              <span className="text-sm text-red-500">*</span>
+              <span className="text-sm text-muted-foreground">(Click on the map to set location)</span>
+            </Label>
+            <div className="h-[300px] w-full border rounded-lg overflow-hidden">
+              <SelectLocationMap
+                onLocationSelect={handleLocationSelect}
+                initialLatitude={form.getValues("adress.latitude")}
+                initialLongitude={form.getValues("adress.longitude")}
               />
-              {form.formState.errors.adress?.latitude && (
-                <p className="text-sm text-red-500">{form.formState.errors.adress.latitude.message}</p>
-              )}
             </div>
-            <div className="space-y-2">
-              <Label
-                htmlFor="longitude"
-                className={cn("flex items-baseline gap-2", form.formState.errors.adress?.longitude && "text-red-500")}
-              >
-                <span>Longitude</span>
-                <span className="text-sm text-red-500">*</span>
-              </Label>
-              <Input
-                id="longitude"
-                type="number"
-                step="0.0001"
-                {...form.register("adress.longitude", { valueAsNumber: true })}
-                placeholder="Enter longitude"
-                className={cn(form.formState.errors.adress?.longitude && "border-red-500")}
-                aria-invalid={!!form.formState.errors.adress?.longitude}
-              />
-              {form.formState.errors.adress?.longitude && (
-                <p className="text-sm text-red-500">{form.formState.errors.adress.longitude.message}</p>
-              )}
+            <div className="text-sm text-muted-foreground">
+              Selected coordinates: {form.getValues("adress.latitude")}, {form.getValues("adress.longitude")}
             </div>
           </div>
           <div className="space-y-2">
