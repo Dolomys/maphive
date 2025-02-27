@@ -7,6 +7,9 @@ export async function GET() {
     include: {
       address: true,
     },
+    orderBy: {
+      createdAt: "desc",
+    },
   });
 
   return NextResponse.json(activities);

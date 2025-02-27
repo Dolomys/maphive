@@ -21,6 +21,10 @@ export const CreateActivitySchema = z.object({
   contact: z.string().optional(),
   type: z.nativeEnum(ActivityCategory).optional().default(ActivityCategory.structure),
   imageUrl: z.string().optional(),
+  duration: z.number().min(1).max(24).optional(),
+  missions: z.array(z.string()).optional(),
+  isPaid: z.boolean().optional(),
+  rating: z.number().min(1).max(5).optional(),
 });
 
 export type CreateActivityInput = z.infer<typeof CreateActivitySchema>;

@@ -27,6 +27,10 @@ model Activity {
   type        ActivityCategory? @default(structure)
   description String?
   imageUrl    String?         @map("image_url")
+  duration    Int?            // Durée en mois
+  missions    String[]        // Liste des missions effectuées
+  isPaid      Boolean?        @map("is_paid") // Stage gratifié ou non
+  rating      Int?            // Avis stage (1-5 étoiles)
   addressId   String?         @map("address_id") @unique
   address     Address?        @relation(fields: [addressId], references: [id], onDelete: Cascade)
   createdAt   DateTime        @default(now()) @map("created_at")

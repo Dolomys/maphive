@@ -7,31 +7,44 @@ import { CreateActivitySchema } from "../models/activity";
 export const createActivity = authActionClient
   .metadata({ name: "create-activity" })
   .schema(CreateActivitySchema)
-  .action(async ({ parsedInput: { title, subtitle, description, adress, contact }, ctx: { user } }) => {
-    const activity = await prisma.activity.create({
-      data: {
-        title,
-        subtitle,
-        description,
-        type: ActivityCategory.structure,
-        creator: {
-          connect: {
-            id: user?.id,
+  .action(
+    async ({
+      parsedInput: { title, subtitle, description, adress, contact, duration, missions, isPaid, rating, imageUrl },
+      ctx: { user },
+    }) => {
+      const activity = await prisma.activity.create({
+        data: {
+          title,
+          subtitle,
+          description,
+          type: ActivityCategory.structure,
+          creator: {
+            connect: {
+              id: user?.id,
+            },
+          },
+          contact,
+          duration,
+          missions: missions || [],
+          isPaid: isPaid || false,
+          rating,
+          imageUrl,
+          address: {
+            create: {
+              street: adress.street,
+              city: adress.city,
+              zip: adress.zip,
+              latitude: adress.latitude,
+              longitude: adress.longitude,
+            },
           },
         },
-        contact,
-        address: {
-          create: {
-            street: adress.street,
-            city: adress.city,
-            zip: adress.zip,
-            latitude: adress.latitude,
-            longitude: adress.longitude,
-          },
+        include: {
+          address: true,
         },
-      },
-    });
-    console.log("ACTIVITY", activity);
+      });
+      console.log("ACTIVITY", activity);
 
-    return activity;
-  });
+      return activity;
+    }
+  );

@@ -1,5 +1,17 @@
 import { Activity } from "../models/activity";
-import { MapPin, Phone, Mail, Building2, Users } from "lucide-react";
+import {
+  MapPin,
+  Phone,
+  Mail,
+  Building2,
+  Users,
+  AtSign,
+  Star,
+  Clock,
+  CheckCircle,
+  XCircle,
+  ClipboardList,
+} from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import Image from "next/image";
 import dynamic from "next/dynamic";
@@ -66,7 +78,7 @@ const ActivityDetail = ({ activity, onBack }: ActivityDetailProps) => {
                   <MapPin className="w-5 h-5 text-primary" />
                   Adresse
                 </h3>
-                <div className="bg-muted/30 rounded-lg p-4">
+                <div className="bg-muted rounded-lg p-4">
                   <p className="font-medium">{activity.address.street}</p>
                   <p>{`${activity.address.city}`}</p>
                   <p className="text-muted-foreground">{activity.address.country}</p>
@@ -88,9 +100,11 @@ const ActivityDetail = ({ activity, onBack }: ActivityDetailProps) => {
                   {activity.contact.includes("@") ? (
                     <div className="flex items-center gap-2">
                       <Mail className="w-4 h-4 text-muted-foreground" />
-                      <a href={`mailto:${activity.contact}`} className="text-primary hover:underline">
-                        {activity.contact}
-                      </a>
+                      <div className="flex items-center gap-1">
+                        <a href={`mailto:${activity.contact}`} className="text-primary hover:underline">
+                          {activity.contact}
+                        </a>
+                      </div>
                     </div>
                   ) : activity.contact.match(/^\+?[\d\s-]+$/) ? (
                     <div className="flex items-center gap-2">
@@ -100,13 +114,72 @@ const ActivityDetail = ({ activity, onBack }: ActivityDetailProps) => {
                       </a>
                     </div>
                   ) : (
-                    <p>{activity.contact}</p>
+                    <div className="flex items-center gap-2">
+                      <AtSign className="w-4 h-4 text-muted-foreground text-orange-500" />
+                      <p>{activity.contact}</p>
+                    </div>
                   )}
                 </div>
               </div>
             )}
           </div>
         </div>
+
+        {activity.type === "structure" && (
+          <div className="space-y-4 mt-4">
+            {activity.duration && (
+              <div className="flex items-center gap-2.5">
+                <Clock className="w-4 h-4 text-primary/70" />
+                <span className="text-muted-foreground/80">Durée : {activity.duration} mois</span>
+              </div>
+            )}
+
+            {activity.isPaid !== undefined && (
+              <div className="flex items-center gap-2.5">
+                {activity.isPaid ? (
+                  <CheckCircle className="w-4 h-4 text-green-500" />
+                ) : (
+                  <XCircle className="w-4 h-4 text-red-500" />
+                )}
+                <span className="text-muted-foreground/80">
+                  {activity.isPaid ? "Stage gratifié" : "Stage non gratifié"}
+                </span>
+              </div>
+            )}
+
+            {activity.rating && (
+              <div className="flex items-center gap-2.5">
+                <div className="flex">
+                  {[...Array(5)].map((_, index) => (
+                    <Star
+                      key={index}
+                      className={`w-4 h-4 ${
+                        index < (activity.rating || 0) ? "text-yellow-400 fill-yellow-400" : "text-gray-300"
+                      }`}
+                    />
+                  ))}
+                </div>
+                <span className="text-muted-foreground/80">Avis : {activity.rating}/5</span>
+              </div>
+            )}
+
+            {activity.missions && activity.missions.length > 0 && (
+              <div className="space-y-2">
+                <div className="flex items-center gap-2.5">
+                  <ClipboardList className="w-4 h-4 text-primary/70" />
+                  <span className="text-muted-foreground/80">Missions effectuées :</span>
+                </div>
+                <ul className="list-disc list-inside pl-6 space-y-1">
+                  {activity.missions.map((mission, index) => (
+                    <li key={index} className="text-muted-foreground/80">
+                      {mission}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            )}
+          </div>
+        )}
       </div>
     </>
   );
@@ -133,7 +206,7 @@ const ActivityDetail = ({ activity, onBack }: ActivityDetailProps) => {
 
   return (
     <div className="flex flex-col gap-4 p-4">
-      <Card className="w-full max-h-[80vh] overflow-y-auto border-0 shadow-lg bg-white/95 backdrop-blur-sm">
+      <Card className="w-full max-h-[80vh] overflow-y-auto border-0 shadow-lg bg-card backdrop-blur-sm">
         <CardHeader className="pb-2">
           <CardTitle className="text-3xl font-bold bg-gradient-to-r from-primary to-primary/80 bg-clip-text text-transparent">
             {activity.title}

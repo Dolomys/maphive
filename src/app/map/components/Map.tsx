@@ -3,6 +3,8 @@ import { TileLayer, Marker, Popup, useMap } from "react-leaflet";
 import { useEffect } from "react";
 import { Activity } from "../models/activity";
 import customMarker from "@/components/CustomMarker";
+import MarkerClusterGroup from "react-leaflet-markercluster";
+import "react-leaflet-markercluster/styles";
 
 export type Position = {
   lat: number;
@@ -43,32 +45,34 @@ const Map = ({ activities = [], selectedActivity, setSelectedActivity, resizeMap
   return (
     <>
       <TileLayer zIndex={1} attribution="Google Maps" url="https://tile.osm.ch/switzerland/{z}/{x}/{y}.png" />
-      {activities.map((activity) => {
-        if (!activity.address) return null;
-        return (
-          <Marker
-            key={activity.id}
-            position={[activity.address.latitude, activity.address.longitude]}
-            icon={customMarker}
-            eventHandlers={{
-              click: () => {
-                if (activity.address) {
-                  handleZoomToMarker(activity.address.latitude, activity.address.longitude);
-                  setSelectedActivity?.(activity);
-                }
-              },
-            }}
-          >
-            <Popup>
-              <div className="p-2">
-                <h3 className="font-bold">{activity.title}</h3>
-                <p className="text-sm text-muted-foreground">{activity.subtitle}</p>
-                <p className="text-sm mt-2">{activity.address.street}</p>
-              </div>
-            </Popup>
-          </Marker>
-        );
-      })}
+      <MarkerClusterGroup>
+        {activities.map((activity) => {
+          if (!activity.address) return null;
+          return (
+            <Marker
+              key={activity.id}
+              position={[activity.address.latitude, activity.address.longitude]}
+              icon={customMarker}
+              eventHandlers={{
+                click: () => {
+                  if (activity.address) {
+                    handleZoomToMarker(activity.address.latitude, activity.address.longitude);
+                    setSelectedActivity?.(activity);
+                  }
+                },
+              }}
+            >
+              <Popup>
+                <div className="p-2">
+                  <h3 className="font-bold">{activity.title}</h3>
+                  <p className="text-sm text-muted-foreground">{activity.subtitle}</p>
+                  <p className="text-sm mt-2">{activity.address.street}</p>
+                </div>
+              </Popup>
+            </Marker>
+          );
+        })}
+      </MarkerClusterGroup>
     </>
   );
 };

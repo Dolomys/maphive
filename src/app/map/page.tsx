@@ -1,5 +1,5 @@
 "use client";
-import MapItemList from "./components/MapItemList";
+import ActivityList from "./components/ActivityList";
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import dynamic from "next/dynamic";
@@ -78,7 +78,7 @@ const MapPage = () => {
             Retour à la liste
           </Button>
         )}
-        <MapItemList
+        <ActivityList
           selectedActivity={isMobile ? null : selectedActivity}
           setSelectedActivity={handleActivitySelect}
           activities={activities || []}

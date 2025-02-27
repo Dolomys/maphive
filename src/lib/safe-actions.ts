@@ -51,8 +51,6 @@ export const authActionClient = actionClientWithMeta
         return null;
       });
 
-    console.log("USER", user);
-
     if (!user && !supabaseUser) {
       throw new Error("Unauthorized");
     }

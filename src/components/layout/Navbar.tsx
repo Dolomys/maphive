@@ -56,7 +56,7 @@ export const Navbar = () => {
           </SheetTrigger>
 
           <SheetContent
-            side="left"
+            side="right"
             className="flex flex-col justify-between rounded-tr-2xl rounded-br-2xl bg-card border-secondary"
           >
             <div>

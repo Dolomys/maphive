@@ -1,17 +1,17 @@
 import { Button } from "@/components/ui/button";
-import { MapItem } from "./MapItem";
+import { ActivityCard } from "./ActivityCard";
 import { PlusIcon } from "lucide-react";
-import { CreateActivityModal } from "./CreateActivityModal";
+import { CreateUpdateActivityModal } from "./CreateUpdateActivityModal";
 import { Activity } from "../models/activity";
 import ActivityDetail from "./ActivityDetail";
 import { useAuth } from "@/app/(auth)/hooks/useAuth";
-interface MapItemListProps {
+interface ActivityListProps {
   activities: Activity[];
   selectedActivity: Activity | null;
   setSelectedActivity: (activity: Activity | null) => void;
 }
 
-const MapItemList = ({ activities, selectedActivity, setSelectedActivity }: MapItemListProps) => {
+const ActivityList = ({ activities, selectedActivity, setSelectedActivity }: ActivityListProps) => {
   const handleActivityClick = (activity: Activity) => {
     setSelectedActivity(activity);
   };
@@ -28,7 +28,7 @@ const MapItemList = ({ activities, selectedActivity, setSelectedActivity }: MapI
   return (
     <div className="flex flex-col gap-4 p-4">
       {user && (
-        <CreateActivityModal
+        <CreateUpdateActivityModal
           trigger={
             <Button size="sm">
               <PlusIcon className="w-6 h-6 mr-2" /> Ajouter un lieu
@@ -39,11 +39,11 @@ const MapItemList = ({ activities, selectedActivity, setSelectedActivity }: MapI
 
       <div className="space-y-4 mt-4 overflow-y-auto max-h-[80vh] pb-4">
         {activities.map((activity) => (
-          <MapItem key={activity.id} activity={activity} onItemClick={() => handleActivityClick(activity)} />
+          <ActivityCard key={activity.id} activity={activity} onItemClick={() => handleActivityClick(activity)} />
         ))}
       </div>
     </div>
   );
 };
 
-export default MapItemList;
+export default ActivityList;
