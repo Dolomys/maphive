@@ -13,8 +13,8 @@ import { Analytics } from "@vercel/analytics/react";
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: "Shadcn - Landing template",
-  description: "Landing template from Shadcn",
+  title: "Maphive",
+  description: "Communauté de cartographes",
 };
 
 export default function RootLayout({
