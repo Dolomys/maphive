@@ -1,9 +1,8 @@
 "use client";
 import ActivityList from "./components/ActivityList";
-import { useState } from "react";
+import { useState, Suspense } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import dynamic from "next/dynamic";
-import { useActivities } from "./hooks/useActivities";
 import { Activity } from "./models/activity";
 import { LYON_CENTER, LYON_ZOOM } from "@/utils/const";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
@@ -23,7 +22,6 @@ const MapContainer = dynamic(() => import("react-leaflet").then((mod) => mod.Map
 
 const MapPage = () => {
   const [selectedActivity, setSelectedActivity] = useState<Activity | null>(null);
-  const { activities } = useActivities();
   const isMobile = useMediaQuery("(max-width: 768px)");
   const [activeTab, setActiveTab] = useState<string>("list");
 
@@ -48,7 +46,6 @@ const MapPage = () => {
           zoom={LYON_ZOOM}
         >
           <Map
-            activities={activities || []}
             setSelectedActivity={handleActivitySelect}
             selectedActivity={selectedActivity}
             resizeMap={!isMobile && !!selectedActivity}
@@ -81,15 +78,18 @@ const MapPage = () => {
         )}
         {!selectedActivity && (
           <div className="pl-4">
-            <ActivityFilters />
+            <Suspense fallback={<div>Loading filters...</div>}>
+              <ActivityFilters />
+            </Suspense>
           </div>
         )}
         <div className={`${selectedActivity ? "hidden" : "block"}`}>
-          <ActivityList
-            selectedActivity={isMobile ? null : selectedActivity}
-            setSelectedActivity={handleActivitySelect}
-            activities={activities || []}
-          />
+          <Suspense fallback={<div>Loading activities...</div>}>
+            <ActivityList
+              selectedActivity={isMobile ? null : selectedActivity}
+              setSelectedActivity={handleActivitySelect}
+            />
+          </Suspense>
         </div>
         {selectedActivity && !isMobile && (
           <ActivityDetail activity={selectedActivity} onBack={() => setSelectedActivity(null)} />

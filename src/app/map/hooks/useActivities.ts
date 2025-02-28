@@ -1,5 +1,5 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { CreateActivityInput } from "../models/activity";
+import { CreateActivityInput, Activity } from "../models/activity";
 import { toast } from "sonner";
 import { createActivity } from "../actions/create-activity";
 import { deleteActivity } from "../actions/delete-activity";
@@ -23,7 +23,7 @@ export function useActivities() {
         body: JSON.stringify(filters),
       });
       const data = await response.json();
-      return data;
+      return data as Activity[];
     },
   });
 

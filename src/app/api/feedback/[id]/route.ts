@@ -1,8 +1,12 @@
 import { prisma } from "@/lib/prisma";
 import { createClient } from "@/lib/supabase/server";
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 
-export async function DELETE(request: Request, { params }: { params: { id: string } }) {
+export async function DELETE(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
+  const { id } = await params;
+  if (!id) {
+    return new Response("Id is required", { status: 400 });
+  }
   try {
     const supabase = await createClient();
     const {
@@ -14,7 +18,7 @@ export async function DELETE(request: Request, { params }: { params: { id: strin
     }
 
     await prisma.feedback.delete({
-      where: { id: params.id },
+      where: { id: id },
     });
 
     return new Response(null, { status: 204 });
@@ -24,7 +28,11 @@ export async function DELETE(request: Request, { params }: { params: { id: strin
   }
 }
 
-export async function PATCH(request: Request, { params }: { params: { id: string } }) {
+export async function PATCH(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
+  const { id } = await params;
+  if (!id) {
+    return new Response("Id is required", { status: 400 });
+  }
   try {
     const supabase = await createClient();
     const {
@@ -38,7 +46,7 @@ export async function PATCH(request: Request, { params }: { params: { id: string
     const { status } = await request.json();
 
     const feedback = await prisma.feedback.update({
-      where: { id: params.id },
+      where: { id: id },
       data: { status },
     });
 

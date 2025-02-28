@@ -5,21 +5,21 @@ import { Activity } from "../models/activity";
 import customMarker from "@/components/CustomMarker";
 import MarkerClusterGroup from "react-leaflet-markercluster";
 import "react-leaflet-markercluster/styles";
-
+import { useActivities } from "../hooks/useActivities";
 export type Position = {
   lat: number;
   lng: number;
 };
 
 interface MapProps {
-  activities?: Activity[];
   selectedActivity?: Activity | null;
   setSelectedActivity?: (activity: Activity | null) => void;
   resizeMap?: boolean;
 }
 
-const Map = ({ activities = [], selectedActivity, setSelectedActivity, resizeMap = false }: MapProps) => {
+const Map = ({ selectedActivity, setSelectedActivity, resizeMap = false }: MapProps) => {
   const map = useMap();
+  const { activities } = useActivities();
 
   useEffect(() => {
     if (resizeMap) {
@@ -28,7 +28,7 @@ const Map = ({ activities = [], selectedActivity, setSelectedActivity, resizeMap
   }, [resizeMap, map]);
 
   useEffect(() => {
-    if (activities.length > 0 && activities[0].address) {
+    if (activities && activities.length > 0 && activities[0].address) {
       map.flyTo([activities[0].address.latitude, activities[0].address.longitude], 12, {
         duration: 1.5,
         easeLinearity: 0.35,
@@ -55,7 +55,7 @@ const Map = ({ activities = [], selectedActivity, setSelectedActivity, resizeMap
     <>
       <TileLayer zIndex={1} attribution="Google Maps" url="https://tile.osm.ch/switzerland/{z}/{x}/{y}.png" />
       <MarkerClusterGroup>
-        {activities.map((activity) => {
+        {activities?.map((activity) => {
           if (!activity.address) return null;
           return (
             <Marker

@@ -5,13 +5,14 @@ import { CreateUpdateActivityModal } from "./CreateUpdateActivityModal";
 import { Activity } from "../models/activity";
 import ActivityDetail from "./ActivityDetail";
 import { useAuth } from "@/app/(auth)/hooks/useAuth";
+import { useActivities } from "../hooks/useActivities";
 interface ActivityListProps {
-  activities: Activity[];
   selectedActivity: Activity | null;
   setSelectedActivity: (activity: Activity | null) => void;
 }
 
-const ActivityList = ({ activities, selectedActivity, setSelectedActivity }: ActivityListProps) => {
+const ActivityList = ({ selectedActivity, setSelectedActivity }: ActivityListProps) => {
+  const { activities } = useActivities();
   const handleActivityClick = (activity: Activity) => {
     setSelectedActivity(activity);
   };
@@ -38,7 +39,7 @@ const ActivityList = ({ activities, selectedActivity, setSelectedActivity }: Act
       )}
 
       <div className="space-y-4 mt-4 overflow-y-auto max-h-[80vh] pb-4">
-        {activities.map((activity) => (
+        {activities?.map((activity) => (
           <ActivityCard key={activity.id} activity={activity} onItemClick={() => handleActivityClick(activity)} />
         ))}
       </div>
