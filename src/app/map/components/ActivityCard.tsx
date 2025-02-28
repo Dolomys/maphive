@@ -23,6 +23,15 @@ export const ActivityCard = ({ activity, onItemClick }: ActivityCardProps) => {
 
   const moreContent = (
     <div className="flex flex-col gap-1 min-w-[140px]" onClick={(e) => e.stopPropagation()}>
+      <CreateUpdateActivityModal
+        trigger={
+          <div className="flex items-center gap-2.5 p-2 hover:bg-muted rounded-md transition-colors cursor-pointer">
+            <PencilIcon className="w-4 h-4 text-primary" />
+            <p className="text-sm">Modifier</p>
+          </div>
+        }
+        activity={activity}
+      />
       <ConfirmDialog
         title="Supprimer l'activité"
         description="Voulez-vous vraiment supprimer cette activité ?"
@@ -33,15 +42,6 @@ export const ActivityCard = ({ activity, onItemClick }: ActivityCardProps) => {
             <p className="text-sm">Supprimer</p>
           </div>
         }
-      />
-      <CreateUpdateActivityModal
-        trigger={
-          <div className="flex items-center gap-2.5 p-2 hover:bg-muted rounded-md transition-colors cursor-pointer">
-            <PencilIcon className="w-4 h-4 text-primary" />
-            <p className="text-sm">Modifier</p>
-          </div>
-        }
-        activity={activity}
       />
     </div>
   );

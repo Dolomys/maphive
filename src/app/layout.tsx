@@ -9,6 +9,7 @@ import { Providers } from "./providers";
 import ReactQueryProvider from "@/components/providers/ReactQueryProvider";
 import { Toaster } from "sonner";
 import { Analytics } from "@vercel/analytics/react";
+import { FeedbackButton } from "@/components/feedbacks/FeedbackButton";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -37,6 +38,7 @@ export default function RootLayout({
           </ReactQueryProvider>
         </ThemeProvider>
         <Analytics />
+        <FeedbackButton />
       </body>
     </html>
   );

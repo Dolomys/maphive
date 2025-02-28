@@ -11,6 +11,7 @@ import { useMediaQuery } from "@/hooks/useMediaQuery";
 import { MapIcon, ListIcon, ArrowLeft } from "lucide-react";
 import ActivityDetail from "./components/ActivityDetail";
 import { Button } from "@/components/ui/button";
+import { ActivityFilters } from "./components/ActivityFilters";
 
 const Map = dynamic(() => import("./components/Map"), {
   ssr: false,
@@ -78,11 +79,21 @@ const MapPage = () => {
             Retour à la liste
           </Button>
         )}
-        <ActivityList
-          selectedActivity={isMobile ? null : selectedActivity}
-          setSelectedActivity={handleActivitySelect}
-          activities={activities || []}
-        />
+        {!selectedActivity && (
+          <div className="pl-4">
+            <ActivityFilters />
+          </div>
+        )}
+        <div className={`${selectedActivity ? "hidden" : "block"}`}>
+          <ActivityList
+            selectedActivity={isMobile ? null : selectedActivity}
+            setSelectedActivity={handleActivitySelect}
+            activities={activities || []}
+          />
+        </div>
+        {selectedActivity && !isMobile && (
+          <ActivityDetail activity={selectedActivity} onBack={() => setSelectedActivity(null)} />
+        )}
       </motion.div>
     </AnimatePresence>
   );
@@ -109,18 +120,9 @@ const MapPage = () => {
               </TabsContent>
             </Tabs>
           </div>
-
-          {selectedActivity && (
-            <ActivityDetail
-              activity={selectedActivity}
-              onBack={() => {
-                setSelectedActivity(null);
-              }}
-            />
-          )}
         </>
       ) : (
-        <div className="flex h-full gap-5">
+        <div className="flex h-full">
           {listContent}
           {mapContent}
         </div>

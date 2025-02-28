@@ -16,6 +16,7 @@ import {
   DropdownMenuTrigger,
 } from "../ui/dropdown-menu";
 import { Avatar, AvatarFallback } from "../ui/avatar";
+import SearchInput from "../SearchInput";
 
 interface RouteProps {
   href: string;
@@ -43,9 +44,9 @@ export const Navbar = () => {
           <MapPinned className="bg-gradient-to-tr p-1 border-secondary from-primary via-primary/70 to-primary rounded-lg w-9 h-9 mr-2 border text-white" />
           MapHive
         </Link>
-        {/* <div className="hidden lg:block">
+        <div className="hidden lg:block">
           <SearchInput />
-        </div> */}
+        </div>
       </div>
 
       {/* Mobile */}
@@ -129,15 +130,9 @@ export const Navbar = () => {
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end" className="w-56">
               <DropdownMenuItem asChild>
-                <Link href="/profile" className="cursor-pointer">
+                <Link href="/dashboard/feedbacks" className="cursor-pointer">
                   <User className="mr-2 h-4 w-4" />
-                  Profile
-                </Link>
-              </DropdownMenuItem>
-              <DropdownMenuItem asChild>
-                <Link href="/maps" className="cursor-pointer">
-                  <MapPinned className="mr-2 h-4 w-4" />
-                  My Maps
+                  Feedbacks
                 </Link>
               </DropdownMenuItem>
               <DropdownMenuSeparator />

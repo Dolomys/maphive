@@ -4,13 +4,24 @@ import { toast } from "sonner";
 import { createActivity } from "../actions/create-activity";
 import { deleteActivity } from "../actions/delete-activity";
 import { updateActivity } from "../actions/update-activity";
+import { DEFAULT_FILTERS } from "../models/filters";
+import { useFilters } from "./useFilters";
+import { ActivityFilters } from "../models/filters";
+
 export function useActivities() {
   const queryClient = useQueryClient();
+  const [filters] = useFilters<ActivityFilters>("activity-filters", DEFAULT_FILTERS);
 
   const { data: activities, isLoading } = useQuery({
-    queryKey: ["activities"],
+    queryKey: ["activities", filters],
     queryFn: async () => {
-      const response = await fetch("/api/map/get-all");
+      const response = await fetch("/api/map/activities", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(filters),
+      });
       const data = await response.json();
       return data;
     },

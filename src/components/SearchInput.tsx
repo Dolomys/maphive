@@ -5,12 +5,12 @@ import { useRouter } from "next/navigation";
 
 export default function SearchInput() {
   const id = useId();
-  const [inputValue, setInputValue] = useState("");
   const router = useRouter();
+  const [search, setSearch] = useState("");
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    router.push(`/map?search=${inputValue}`);
+    router.push(`/map?activity-filters=${JSON.stringify({ city: search })}`);
   };
   return (
     <div className="*:not-first:mt-2">
@@ -20,8 +20,8 @@ export default function SearchInput() {
           className="peer ps-9 pe- "
           placeholder="Search a spot"
           type="search"
-          value={inputValue}
-          onChange={(e) => setInputValue(e.target.value)}
+          value={search}
+          onChange={(e) => setSearch(e.target.value)}
         />
         <div className="text-muted-foreground/80 pointer-events-none absolute inset-y-0 start-0 flex items-center justify-center ps-3 peer-disabled:opacity-50">
           <SearchIcon size={16} />

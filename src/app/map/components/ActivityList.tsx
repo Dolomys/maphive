@@ -30,7 +30,7 @@ const ActivityList = ({ activities, selectedActivity, setSelectedActivity }: Act
       {user && (
         <CreateUpdateActivityModal
           trigger={
-            <Button size="sm">
+            <Button size="sm" className="w-fit">
               <PlusIcon className="w-6 h-6 mr-2" /> Ajouter un lieu
             </Button>
           }

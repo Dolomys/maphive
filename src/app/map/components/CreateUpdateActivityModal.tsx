@@ -109,7 +109,7 @@ export const CreateUpdateActivityModal = ({ trigger, activity }: CreateUpdateAct
       <DialogTrigger asChild>{trigger}</DialogTrigger>
       <DialogContent className="sm:max-w-[725px] max-h-[70dvh] md:max-h-[90vh] overflow-y-auto">
         <DialogHeader>
-          <DialogTitle>Ajouter un lieu</DialogTitle>
+          <DialogTitle>{activity ? "Modifier un lieu" : "Ajouter un lieu"}</DialogTitle>
         </DialogHeader>
         <form onSubmit={form.handleSubmit(onSubmit, onError)} className="space-y-4">
           <div className="space-y-2">
@@ -282,8 +282,17 @@ export const CreateUpdateActivityModal = ({ trigger, activity }: CreateUpdateAct
           </div>
           <div className="space-y-4">
             <div>
-              <Label>Durée du stage (en mois)</Label>
-              <Input type="number" min="1" max="24" {...form.register("duration", { valueAsNumber: true })} />
+              <Label>Durée du stage (en mois) (optionnel)</Label>
+              <Input
+                type="number"
+                min="1"
+                max="24"
+                {...form.register("duration", {
+                  setValueAs: (value: string) => {
+                    return value === "" ? undefined : parseInt(value, 10);
+                  },
+                })}
+              />
             </div>
 
             <div>
@@ -352,7 +361,7 @@ export const CreateUpdateActivityModal = ({ trigger, activity }: CreateUpdateAct
               Annuler
             </Button>
             <Button type="submit" disabled={form.formState.isSubmitting || !form.formState.isValid}>
-              {form.formState.isSubmitting ? "Création en cours..." : "Créer"}
+              {form.formState.isSubmitting ? "Création en cours..." : activity ? "Mettre à jour" : "Créer"}
             </Button>
           </div>
         </form>

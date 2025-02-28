@@ -17,6 +17,7 @@ model User {
   activities    Activity[]  @relation("ActivityCreator")
 
   @@map("users")
+  Feedback Feedback[]
 }
 
 model Activity {
@@ -63,4 +64,26 @@ model Address {
   activity  Activity? // Optional relation to Activity
   
   @@map("addresses")
+}
+
+model Feedback {
+  id        String   @id @default(uuid())
+  message   String
+  status    FeedbackStatus @default(pending)
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+  senderEmail String? 
+  createdBy String?  @map("created_by")
+  creator   User?    @relation(fields: [createdBy], references: [id], onDelete: SetNull)
+
+  @@map("feedbacks")
+}
+
+enum FeedbackStatus {
+  pending
+  inProgress
+  resolved
+  rejected
+
+  @@map("feedback_status")
 }

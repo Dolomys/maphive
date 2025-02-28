@@ -1,13 +1,31 @@
 "use client";
 import { Button } from "@/components/ui/button";
-import { ArrowRight } from "lucide-react";
+import { ArrowRight, ArrowUp } from "lucide-react";
 import { useTheme } from "next-themes";
 import Image from "next/image";
 import Link from "next/link";
 import { motion } from "framer-motion";
+import React from "react";
 
 export const HeroSection = () => {
   const { theme } = useTheme();
+
+  // Add scroll handler
+  const [showScrollTop, setShowScrollTop] = React.useState(false);
+
+  React.useEffect(() => {
+    const handleScroll = () => {
+      setShowScrollTop(window.scrollY > 400);
+    };
+
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
+
+  const scrollToTop = () => {
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  };
+
   return (
     <section className=" w-full">
       <div className="grid place-items-center lg:max-w-screen-xl gap-8 mx-auto py-20 md:py-32">
@@ -77,6 +95,18 @@ export const HeroSection = () => {
 
           <div className="absolute bottom-0 left-0 w-full h-20 md:h-28 bg-gradient-to-b from-background/0 via-background/50 to-background rounded-lg"></div>
         </motion.div>
+
+        <motion.button
+          onClick={scrollToTop}
+          className={`fixed bottom-8 right-[50%] hover:scale-110 transition-all duration-300 ${
+            showScrollTop ? "opacity-100" : "opacity-0 pointer-events-none"
+          }`}
+          initial={{ opacity: 0 }}
+          animate={{ opacity: showScrollTop ? 1 : 0 }}
+          transition={{ duration: 0.3 }}
+        >
+          <ArrowUp className="size-6 text-primary" />
+        </motion.button>
       </div>
     </section>
   );

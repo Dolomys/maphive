@@ -28,6 +28,15 @@ const Map = ({ activities = [], selectedActivity, setSelectedActivity, resizeMap
   }, [resizeMap, map]);
 
   useEffect(() => {
+    if (activities.length > 0 && activities[0].address) {
+      map.flyTo([activities[0].address.latitude, activities[0].address.longitude], 12, {
+        duration: 1.5,
+        easeLinearity: 0.35,
+      });
+    }
+  }, [activities, map]);
+
+  useEffect(() => {
     if (selectedActivity && selectedActivity.address) {
       map.flyTo([selectedActivity.address.latitude, selectedActivity.address.longitude], 16, {
         duration: 1.5,
