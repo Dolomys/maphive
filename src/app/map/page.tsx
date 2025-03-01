@@ -27,9 +27,6 @@ const MapPage = () => {
 
   const handleActivitySelect = (activity: Activity | null) => {
     setSelectedActivity(activity);
-    if (isMobile && activity) {
-      setActiveTab("map");
-    }
   };
 
   const mapContent = (
@@ -66,7 +63,7 @@ const MapPage = () => {
           selectedActivity && !isMobile ? (isMobile ? "w-full" : "w-2/4") : isMobile ? "w-full" : "w-[400px]"
         } h-full overflow-y-auto z-10`}
       >
-        {selectedActivity && (
+        {selectedActivity && !isMobile && (
           <Button
             variant="ghost"
             className="w-fit flex items-center gap-2 hover:bg-gray-100/80 transition-colors"
@@ -119,6 +116,10 @@ const MapPage = () => {
                 {mapContent}
               </TabsContent>
             </Tabs>
+
+            {selectedActivity && (
+              <ActivityDetail activity={selectedActivity} onBack={() => setSelectedActivity(null)} />
+            )}
           </div>
         </>
       ) : (
