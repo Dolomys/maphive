@@ -18,6 +18,7 @@ import {
 import { Avatar, AvatarFallback } from "../ui/avatar";
 import SearchInput from "../SearchInput";
 import { UserRole } from "@prisma/client";
+import Image from "next/image";
 
 interface RouteProps {
   href: string;
@@ -49,7 +50,7 @@ export const Navbar = () => {
     <header className="shadow-inner bg-opacity-15 container top-5 mx-auto sticky border border-secondary z-40 rounded-2xl flex justify-between items-center p-2 bg-card">
       <div className="flex items-center gap-5">
         <Link href="/" className="font-bold text-lg flex items-center">
-          <MapPinned className="bg-gradient-to-tr p-1 border-secondary from-primary via-primary/70 to-primary rounded-lg w-9 h-9 mr-2 border text-white" />
+          <Image src="/logo.png" alt="Stagium" width={32} height={32} />
           Stagium
         </Link>
         <div className="hidden lg:block">
@@ -72,7 +73,7 @@ export const Navbar = () => {
               <SheetHeader className="mb-4 ml-4">
                 <SheetTitle className="flex items-center">
                   <Link href="/" className="flex items-center">
-                    <MapPinned className="bg-gradient-to-tr p-1 border-secondary from-primary via-primary/70 to-primary rounded-lg w-9 h-9 mr-2 border text-white" />
+                    <Image src="/logo.png" alt="Stagium" width={32} height={32} />
                     Stagium
                   </Link>
                 </SheetTitle>
