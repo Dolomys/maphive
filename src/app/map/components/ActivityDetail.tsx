@@ -1,4 +1,3 @@
-import { Activity } from "../models/activity";
 import {
   MapPin,
   Phone,
@@ -11,26 +10,30 @@ import {
   CheckCircle,
   XCircle,
   ClipboardList,
+  Loader,
 } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import Image from "next/image";
 import dynamic from "next/dynamic";
 import { useMediaQuery } from "@/hooks/useMediaQuery";
 import { Sheet, SheetContent, SheetTitle } from "@/components/ui/sheet";
+import { Badge } from "@/components/ui/badge";
+import { useGetActivity } from "@/hooks/useGetActivity";
 
 const SmallMap = dynamic(() => import("./SmallMap"), {
   ssr: false,
 });
 
 interface ActivityDetailProps {
-  activity: Activity;
   onBack: () => void;
 }
 
-const ActivityDetail = ({ activity, onBack }: ActivityDetailProps) => {
+const ActivityDetail = ({ onBack }: ActivityDetailProps) => {
   const isMobile = useMediaQuery("(max-width: 768px)");
+  const { activity, isPending } = useGetActivity();
 
   if (!activity) return null;
+  if (isPending) return <Loader />;
 
   const content = (
     <>
@@ -83,7 +86,7 @@ const ActivityDetail = ({ activity, onBack }: ActivityDetailProps) => {
                   <p>{`${activity.address.city}`}</p>
                   <p className="text-muted-foreground">{activity.address.country}</p>
                 </div>
-                {isMobile && (
+                {isMobile && activity.address.latitude && activity.address.longitude && (
                   <div className="mt-4 h-[200px] rounded-lg overflow-hidden border">
                     <SmallMap latitude={activity.address.latitude} longitude={activity.address.longitude} />
                   </div>
@@ -208,8 +211,13 @@ const ActivityDetail = ({ activity, onBack }: ActivityDetailProps) => {
     <div className="flex flex-col gap-4 p-4">
       <Card className="w-full max-h-[80vh] overflow-y-auto border-0 shadow-lg bg-card backdrop-blur-sm">
         <CardHeader className="pb-2">
-          <CardTitle className="text-3xl font-bold bg-gradient-to-r from-primary to-primary/80 bg-clip-text text-transparent">
+          <CardTitle className="flex items-center justify-between text-3xl font-bold bg-gradient-to-r from-primary to-primary/80 bg-clip-text text-transparent">
             {activity.title}
+            {activity.status === "draft" && (
+              <Badge variant="warning" className="mt-2 text-white">
+                En cours de révision
+              </Badge>
+            )}
           </CardTitle>
           <CardContent>{content}</CardContent>
         </CardHeader>

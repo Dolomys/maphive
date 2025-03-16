@@ -18,7 +18,7 @@ export default function SearchInput() {
         <Input
           id={id}
           className="peer ps-9 pe- "
-          placeholder="Search a spot"
+          placeholder="Chercher une ville"
           type="search"
           value={search}
           onChange={(e) => setSearch(e.target.value)}

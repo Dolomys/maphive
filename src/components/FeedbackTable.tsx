@@ -14,21 +14,11 @@ import { cn } from "@/lib/utils";
 import { FeedbackDetailsModal } from "./feedbacks/FeedbackDetailsModal";
 import { toast } from "sonner";
 import { useState } from "react";
-
-type Feedback = {
-  id: string;
-  message: string;
-  status: "pending" | "inProgress" | "resolved" | "rejected";
-  createdAt: string;
-  senderEmail: string | null;
-  creator?: {
-    name: string | null;
-    email: string;
-  } | null;
-};
+import { FeedbackWithCreator } from "@/app/dashboard/feedbacks/page";
+import dayjs from "dayjs";
 
 interface FeedbackTableProps {
-  feedbacks: Feedback[];
+  feedbacks: FeedbackWithCreator[];
 }
 
 const statusColors = {
@@ -38,22 +28,12 @@ const statusColors = {
   rejected: "bg-red-100 text-red-900 border border-red-200",
 };
 
-const formatDate = (date: string) => {
-  return new Date(date).toLocaleDateString("fr-FR", {
-    year: "numeric",
-    month: "long",
-    day: "numeric",
-    hour: "2-digit",
-    minute: "2-digit",
-  });
-};
-
 export function FeedbackTable({ feedbacks: initialFeedbacks }: FeedbackTableProps) {
   const [feedbacks, setFeedbacks] = useState(initialFeedbacks);
-  const [selectedFeedback, setSelectedFeedback] = useState<Feedback | null>(null);
+  const [selectedFeedback, setSelectedFeedback] = useState<FeedbackWithCreator | null>(null);
   const [detailsModalOpen, setDetailsModalOpen] = useState(false);
 
-  const handleStatusUpdate = async (id: string, status: Feedback["status"]) => {
+  const handleStatusUpdate = async (id: string, status: FeedbackWithCreator["status"]) => {
     try {
       const response = await fetch(`/api/feedback/${id}`, {
         method: "PATCH",
@@ -92,7 +72,7 @@ export function FeedbackTable({ feedbacks: initialFeedbacks }: FeedbackTableProp
     }
   };
 
-  const showDetails = (feedback: Feedback) => {
+  const showDetails = (feedback: FeedbackWithCreator) => {
     setSelectedFeedback(feedback);
     setDetailsModalOpen(true);
   };
@@ -114,7 +94,7 @@ export function FeedbackTable({ feedbacks: initialFeedbacks }: FeedbackTableProp
             <TableBody>
               {feedbacks.map((feedback) => (
                 <TableRow key={feedback.id} className="group">
-                  <TableCell className="font-medium">{formatDate(feedback.createdAt)}</TableCell>
+                  <TableCell className="font-medium">{dayjs(feedback.createdAt).format("DD/MM/YYYY HH:mm")}</TableCell>
                   <TableCell>
                     <div className="flex flex-col">
                       <span>{feedback.creator ? feedback.creator.name || "Anonyme" : "Anonyme"}</span>

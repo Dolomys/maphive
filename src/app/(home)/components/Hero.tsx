@@ -42,14 +42,14 @@ export const HeroSection = () => {
             transition={{ duration: 0.5, delay: 0.2 }}
           >
             <h1>
-              🚀 La
-              <span className="text-transparent px-2 bg-gradient-to-r from-[#D247BF] to-primary bg-clip-text">
-                carte interactive
+              🎓 La
+              <span className="text-transparent px-2 bg-gradient-to-r from-[#68ff54] to-primary bg-clip-text">
+                plateforme de stages
               </span>
               <br />
               par et pour
               <br />
-              ses utilisateurs
+              les étudiants
             </h1>
           </motion.div>
 
@@ -59,8 +59,8 @@ export const HeroSection = () => {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5, delay: 0.4 }}
           >
-            🌍 Découvrez et partagez des pépites cachées avec notre map collaborative — des lieux authentiques, basés
-            sur de vraies expériences. ✨{" "}
+            🌟 Découvrez et partagez vos expériences de stages — aidez les autres étudiants à trouver leur stage idéal
+            et enrichissez votre réseau professionnel. 🚀{" "}
           </motion.p>
 
           <motion.div
@@ -71,7 +71,7 @@ export const HeroSection = () => {
           >
             <Link href="/map">
               <Button className="w-5/6 md:w-1/3 h-14 text-lg font-bold group/arrow hover:scale-105 transition-all duration-300 hover:shadow-lg hover:shadow-primary/25">
-                Voir la carte
+                Explorer les stages
                 <ArrowRight className="size-6 ml-2 group-hover/arrow:translate-x-2 transition-transform duration-300" />
               </Button>
             </Link>

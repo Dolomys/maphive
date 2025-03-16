@@ -3,7 +3,6 @@ import ActivityList from "./components/ActivityList";
 import { useState, Suspense } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import dynamic from "next/dynamic";
-import { Activity } from "./models/activity";
 import { LYON_CENTER, LYON_ZOOM } from "@/utils/const";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { useMediaQuery } from "@/hooks/useMediaQuery";
@@ -11,6 +10,7 @@ import { MapIcon, ListIcon, ArrowLeft } from "lucide-react";
 import ActivityDetail from "./components/ActivityDetail";
 import { Button } from "@/components/ui/button";
 import { ActivityFilters } from "./components/ActivityFilters";
+import { useGetActivity } from "@/hooks/useGetActivity";
 
 const Map = dynamic(() => import("./components/Map"), {
   ssr: false,
@@ -21,13 +21,9 @@ const MapContainer = dynamic(() => import("react-leaflet").then((mod) => mod.Map
 });
 
 const MapPage = () => {
-  const [selectedActivity, setSelectedActivity] = useState<Activity | null>(null);
+  const { selectedActivityId, setSelectedActivityId } = useGetActivity();
   const isMobile = useMediaQuery("(max-width: 768px)");
   const [activeTab, setActiveTab] = useState<string>("list");
-
-  const handleActivitySelect = (activity: Activity | null) => {
-    setSelectedActivity(activity);
-  };
 
   const mapContent = (
     <motion.div layout transition={{ duration: 0.3 }} className="flex-1 h-full">
@@ -42,11 +38,7 @@ const MapPage = () => {
           center={LYON_CENTER}
           zoom={LYON_ZOOM}
         >
-          <Map
-            setSelectedActivity={handleActivitySelect}
-            selectedActivity={selectedActivity}
-            resizeMap={!isMobile && !!selectedActivity}
-          />
+          <Map resizeMap={!isMobile && !!selectedActivityId} />
         </MapContainer>
       </div>
     </motion.div>
@@ -60,37 +52,32 @@ const MapPage = () => {
         exit={{ opacity: 0, x: -300 }}
         transition={{ duration: 0.3 }}
         className={`${
-          selectedActivity && !isMobile ? (isMobile ? "w-full" : "w-2/4") : isMobile ? "w-full" : "w-[400px]"
+          selectedActivityId && !isMobile ? (isMobile ? "w-full" : "w-2/4") : isMobile ? "w-full" : "w-[400px]"
         } h-full overflow-y-auto z-10`}
       >
-        {selectedActivity && !isMobile && (
+        {selectedActivityId && !isMobile && (
           <Button
             variant="ghost"
             className="w-fit flex items-center gap-2 hover:bg-gray-100/80 transition-colors"
-            onClick={() => setSelectedActivity(null)}
+            onClick={() => setSelectedActivityId(null)}
           >
             <ArrowLeft className="w-4 h-4" />
             Retour à la liste
           </Button>
         )}
-        {!selectedActivity && (
+        {!selectedActivityId && (
           <div className="pl-4">
             <Suspense fallback={<div>Loading filters...</div>}>
               <ActivityFilters />
             </Suspense>
           </div>
         )}
-        <div className={`${selectedActivity ? "hidden" : "block"}`}>
+        <div className={`${selectedActivityId ? "hidden" : "block"}`}>
           <Suspense fallback={<div>Loading activities...</div>}>
-            <ActivityList
-              selectedActivity={isMobile ? null : selectedActivity}
-              setSelectedActivity={handleActivitySelect}
-            />
+            <ActivityList />
           </Suspense>
         </div>
-        {selectedActivity && !isMobile && (
-          <ActivityDetail activity={selectedActivity} onBack={() => setSelectedActivity(null)} />
-        )}
+        {selectedActivityId && !isMobile && <ActivityDetail onBack={() => setSelectedActivityId(null)} />}
       </motion.div>
     </AnimatePresence>
   );
@@ -117,9 +104,7 @@ const MapPage = () => {
               </TabsContent>
             </Tabs>
 
-            {selectedActivity && (
-              <ActivityDetail activity={selectedActivity} onBack={() => setSelectedActivity(null)} />
-            )}
+            {selectedActivityId && <ActivityDetail onBack={() => setSelectedActivityId(null)} />}
           </div>
         </>
       ) : (

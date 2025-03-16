@@ -2,6 +2,7 @@
 import { authActionClient } from "@/lib/safe-actions";
 import { prisma } from "@/lib/prisma";
 import { z } from "zod";
+import { UserRole } from "@prisma/client";
 
 export const deleteActivity = authActionClient
   .metadata({ name: "delete-activity" })
@@ -14,9 +15,7 @@ export const deleteActivity = authActionClient
     const activity = await prisma.activity.delete({
       where: {
         id,
-        creator: {
-          id: user?.id,
-        },
+        createdBy: user?.role === UserRole.admin ? undefined : user?.id,
       },
     });
     if (!activity) {

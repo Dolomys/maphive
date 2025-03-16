@@ -1,5 +1,5 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { CreateActivityInput, Activity } from "../models/activity";
+import { CreateActivityInput, Activity, UpdateActivityInput } from "../models/activity";
 import { toast } from "sonner";
 import { createActivity } from "../actions/create-activity";
 import { deleteActivity } from "../actions/delete-activity";
@@ -7,20 +7,21 @@ import { updateActivity } from "../actions/update-activity";
 import { DEFAULT_FILTERS } from "../models/filters";
 import { useFilters } from "./useFilters";
 import { ActivityFilters } from "../models/filters";
+import { User } from "@prisma/client";
 
-export function useActivities() {
+export function useActivities(userId?: User["id"]) {
   const queryClient = useQueryClient();
   const [filters] = useFilters<ActivityFilters>("activity-filters", DEFAULT_FILTERS);
 
   const { data: activities, isLoading } = useQuery({
-    queryKey: ["activities", filters],
+    queryKey: ["activities", filters, userId],
     queryFn: async () => {
       const response = await fetch("/api/map/activities", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify(filters),
+        body: JSON.stringify({ ...filters, creatorId: userId }),
       });
       const data = await response.json();
       return data as Activity[];
@@ -46,7 +47,7 @@ export function useActivities() {
   });
 
   const updateActivityMutation = useMutation({
-    mutationFn: async ({ id, ...newActivity }: CreateActivityInput & { id: string }) => {
+    mutationFn: async ({ id, ...newActivity }: UpdateActivityInput & { id: string }) => {
       const response = await updateActivity({ ...newActivity, id });
       if (response?.serverError) {
         throw response.serverError;

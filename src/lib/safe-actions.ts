@@ -3,6 +3,7 @@ import { z } from "zod";
 import { logger } from "./logger";
 import { createClient } from "./supabase/server";
 import { prisma } from "./prisma";
+import { UserRole } from "@prisma/client";
 
 export const actionClient = createSafeActionClient();
 
@@ -57,6 +58,7 @@ export const authActionClient = actionClientWithMeta
     return next({
       ctx: {
         user,
+        isAdmin: user?.role === UserRole.admin,
       },
     });
   });

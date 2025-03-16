@@ -1,4 +1,4 @@
-import { ActivityCategory } from "@prisma/client";
+import { ActivityCategory, StudyType } from "@prisma/client";
 import { ActivityFilters as ActivityFiltersType } from "../models/filters";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -11,11 +11,29 @@ import { Settings2 } from "lucide-react";
 import { SheetContent, SheetTrigger, SheetTitle, Sheet } from "@/components/ui/sheet";
 import { DEFAULT_FILTERS } from "../models/filters";
 import { useFilters } from "../hooks/useFilters";
+import { useQuery } from "@tanstack/react-query";
+const studyTypes = [
+  { type: StudyType.GACO },
+  { type: StudyType.MDFS },
+  { type: StudyType.MCMO },
+  { type: StudyType.MACAST },
+  { type: StudyType.CJ },
+];
 
 export const ActivityFilters = () => {
   const [filters, setFilters] = useFilters<ActivityFiltersType>("activity-filters", DEFAULT_FILTERS);
   const [durationRange, setDurationRange] = useState<number[]>([filters.minDuration || 1, filters.maxDuration || 24]);
   const [ratingRange, setRatingRange] = useState<number[]>([filters.minRating || 1, filters.maxRating || 5]);
+
+  const { data: types } = useQuery({
+    queryKey: ["types"],
+    queryFn: () => fetch("/api/study/getTypesAndCount").then((res) => res.json()),
+  });
+
+  const studTypeWithCount = studyTypes?.map((type) => ({
+    ...type,
+    count: types?.find((t: { type: StudyType; count: number }) => t.type === type.type)?.count || 0,
+  }));
 
   const handleClearFilters = () => {
     setFilters({
@@ -71,6 +89,25 @@ export const ActivityFilters = () => {
                 <SelectContent>
                   <SelectItem value={ActivityCategory.structure}>Structure</SelectItem>
                   <SelectItem value={ActivityCategory.event}>Événement</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+
+            <div className="space-y-2">
+              <Label>Type d&apos;études</Label>
+              <Select
+                value={filters.studyType || ""}
+                onValueChange={(value) => setFilters({ ...filters, studyType: (value as StudyType) || undefined })}
+              >
+                <SelectTrigger>
+                  <SelectValue placeholder="Tous les types d'études" />
+                </SelectTrigger>
+                <SelectContent>
+                  {studTypeWithCount?.map((type: { type: StudyType; count: number }) => (
+                    <SelectItem key={type.type} value={type.type}>
+                      {type.type}
+                    </SelectItem>
+                  ))}
                 </SelectContent>
               </Select>
             </div>

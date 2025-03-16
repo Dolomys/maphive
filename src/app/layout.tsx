@@ -10,12 +10,15 @@ import ReactQueryProvider from "@/components/providers/ReactQueryProvider";
 import { Toaster } from "sonner";
 import { Analytics } from "@vercel/analytics/react";
 import { FeedbackButton } from "@/components/feedbacks/FeedbackButton";
+import { StudyInfoProvider } from "@/components/providers/StudyInfoProvider";
+import { Suspense } from "react";
+import { Loader } from "@/components/ui/loader";
 
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: "Maphive",
-  description: "Communauté de cartographes",
+  title: "Stagium",
+  description: "Carte des stages étudiants",
 };
 
 export default function RootLayout({
@@ -29,12 +32,15 @@ export default function RootLayout({
         <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
           <ReactQueryProvider>
             <NuqsAdapter>
-              <Navbar />
-              <main className="mt-[30px] flex-1 w-full">
-                <Providers>{children}</Providers>
-              </main>
-              <Toaster />
+              <Suspense fallback={<Loader />}>
+                <Navbar />
+                <main className="mt-[30px] flex-1 w-full">
+                  <Providers>{children}</Providers>
+                </main>
+                <Toaster />
+              </Suspense>
             </NuqsAdapter>
+            <StudyInfoProvider />
           </ReactQueryProvider>
         </ThemeProvider>
         <Analytics />

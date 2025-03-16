@@ -1,5 +1,5 @@
 "use client";
-import { MapPinned, Menu, User } from "lucide-react";
+import { BookOpen, MapPinned, Menu, User } from "lucide-react";
 import React from "react";
 import { Sheet, SheetContent, SheetFooter, SheetHeader, SheetTitle, SheetTrigger } from "../ui/sheet";
 import { Separator } from "../ui/separator";
@@ -17,32 +17,40 @@ import {
 } from "../ui/dropdown-menu";
 import { Avatar, AvatarFallback } from "../ui/avatar";
 import SearchInput from "../SearchInput";
+import { UserRole } from "@prisma/client";
 
 interface RouteProps {
   href: string;
   label: string;
   authRequired?: boolean;
+  onlyMobile?: boolean;
+  onlyAdmin?: boolean;
 }
 
 const routeList: RouteProps[] = [
-  // { href: "/maps", label: "My Maps", authRequired: true },
-  // { href: "/explore", label: "Explore", authRequired: false },
+  { href: "/dashboard/activities", label: "Mes Stages", authRequired: true, onlyMobile: true },
+  { href: "/dashboard/feedbacks", label: "Feedbacks", authRequired: true, onlyMobile: true, onlyAdmin: true },
+  { href: "/map", label: "La carte", authRequired: false, onlyMobile: true },
 ];
 
 export const Navbar = () => {
   const [isOpen, setIsOpen] = React.useState(false);
   const { user, logout } = useAuth();
 
-  const filteredRoutes = routeList.filter((route) => !route.authRequired || (route.authRequired && user));
+  const filteredRoutes = routeList.filter((route) => {
+    if (!route.authRequired) return true;
+    if (route.onlyAdmin && user?.role !== UserRole.admin) return false;
+    return user !== null;
+  });
 
-  const userInitials = user?.email ? user.email.substring(0, 2).toUpperCase() : "??";
+  const userInitials = user?.name ? user.name.substring(0, 2).toUpperCase() : "??";
 
   return (
     <header className="shadow-inner bg-opacity-15 container top-5 mx-auto sticky border border-secondary z-40 rounded-2xl flex justify-between items-center p-2 bg-card">
       <div className="flex items-center gap-5">
         <Link href="/" className="font-bold text-lg flex items-center">
           <MapPinned className="bg-gradient-to-tr p-1 border-secondary from-primary via-primary/70 to-primary rounded-lg w-9 h-9 mr-2 border text-white" />
-          MapHive
+          Stagium
         </Link>
         <div className="hidden lg:block">
           <SearchInput />
@@ -64,8 +72,8 @@ export const Navbar = () => {
               <SheetHeader className="mb-4 ml-4">
                 <SheetTitle className="flex items-center">
                   <Link href="/" className="flex items-center">
-                    <MapPinned className="bg-gradient-to-tr border-secondary from-primary via-primary/70 to-primary rounded-lg w-9 h-9 mr-2 border text-white" />
-                    MapHive
+                    <MapPinned className="bg-gradient-to-tr p-1 border-secondary from-primary via-primary/70 to-primary rounded-lg w-9 h-9 mr-2 border text-white" />
+                    Stagium
                   </Link>
                 </SheetTitle>
               </SheetHeader>
@@ -89,11 +97,11 @@ export const Navbar = () => {
               <Separator className="mb-2" />
               {user ? (
                 <Button variant="ghost" className="justify-start w-full" onClick={() => logout()}>
-                  Sign out
+                  Déconnexion
                 </Button>
               ) : (
                 <Button asChild variant="ghost" className="justify-start w-full">
-                  <Link href="/login">Sign in</Link>
+                  <Link href="/login">Connexion</Link>
                 </Button>
               )}
               <ToggleTheme />
@@ -106,13 +114,15 @@ export const Navbar = () => {
       <NavigationMenu className="hidden lg:block mx-auto">
         <NavigationMenuList>
           <NavigationMenuItem>
-            {filteredRoutes.map(({ href, label }) => (
-              <NavigationMenuLink key={href} asChild>
-                <Link href={href} className="text-base px-2">
-                  {label}
-                </Link>
-              </NavigationMenuLink>
-            ))}
+            {filteredRoutes
+              .filter((x) => !x.onlyMobile)
+              .map(({ href, label }) => (
+                <NavigationMenuLink key={href} asChild>
+                  <Link href={href} className="text-base px-2">
+                    {label}
+                  </Link>
+                </NavigationMenuLink>
+              ))}
           </NavigationMenuItem>
         </NavigationMenuList>
       </NavigationMenu>
@@ -129,6 +139,12 @@ export const Navbar = () => {
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end" className="w-56">
+              <DropdownMenuItem asChild>
+                <Link href="/dashboard/activities" className="cursor-pointer">
+                  <BookOpen className="mr-2 h-4 w-4" />
+                  Mes Stages
+                </Link>
+              </DropdownMenuItem>
               <DropdownMenuItem asChild>
                 <Link href="/dashboard/feedbacks" className="cursor-pointer">
                   <User className="mr-2 h-4 w-4" />

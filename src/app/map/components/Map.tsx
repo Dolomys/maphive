@@ -1,25 +1,27 @@
 import "leaflet/dist/leaflet.css";
 import { TileLayer, Marker, Popup, useMap } from "react-leaflet";
 import { useEffect } from "react";
-import { Activity } from "../models/activity";
 import customMarker from "@/components/CustomMarker";
 import MarkerClusterGroup from "react-leaflet-markercluster";
 import "react-leaflet-markercluster/styles";
-import { useActivities } from "../hooks/useActivities";
+import { useGetActivities } from "../hooks/useGetActivities";
+import { useGetActivity } from "@/hooks/useGetActivity";
 export type Position = {
   lat: number;
   lng: number;
 };
 
 interface MapProps {
-  selectedActivity?: Activity | null;
-  setSelectedActivity?: (activity: Activity | null) => void;
   resizeMap?: boolean;
 }
 
-const Map = ({ selectedActivity, setSelectedActivity, resizeMap = false }: MapProps) => {
+const Map = ({ resizeMap = false }: MapProps) => {
   const map = useMap();
-  const { activities } = useActivities();
+  const { data: activities } = useGetActivities({ withCoordinates: true });
+  const { activity, setSelectedActivityId } = useGetActivity();
+  const activitiesWithCoordinates = activities?.filter(
+    (activity) => activity.address?.latitude && activity.address?.longitude
+  );
 
   useEffect(() => {
     if (resizeMap) {
@@ -28,23 +30,17 @@ const Map = ({ selectedActivity, setSelectedActivity, resizeMap = false }: MapPr
   }, [resizeMap, map]);
 
   useEffect(() => {
-    if (activities && activities.length > 0 && activities[0].address) {
-      map.flyTo([activities[0].address.latitude, activities[0].address.longitude], 12, {
-        duration: 1.5,
-        easeLinearity: 0.35,
-      });
-    }
-  }, [activities, map]);
-
-  useEffect(() => {
-    if (selectedActivity && selectedActivity.address) {
-      map.flyTo([selectedActivity.address.latitude, selectedActivity.address.longitude], 16, {
+    console.log("activity", activity);
+    if (activity?.address?.latitude && activity.address.longitude) {
+      console.log("zooming to", activity.address.latitude, activity.address.longitude);
+      map.flyTo([activity.address.latitude, activity.address.longitude], 16, {
         duration: 1.5,
       });
     }
-  }, [selectedActivity, map]);
+  }, [activity, map]);
 
   const handleZoomToMarker = (lat: number, lng: number) => {
+    console.log("zooming to", lat, lng);
     map.flyTo([lat, lng], 16, {
       duration: 1.5,
       easeLinearity: 0.35,
@@ -55,8 +51,8 @@ const Map = ({ selectedActivity, setSelectedActivity, resizeMap = false }: MapPr
     <>
       <TileLayer zIndex={1} attribution="Google Maps" url="https://tile.osm.ch/switzerland/{z}/{x}/{y}.png" />
       <MarkerClusterGroup>
-        {activities?.map((activity) => {
-          if (!activity.address) return null;
+        {activitiesWithCoordinates?.map((activity) => {
+          if (!activity.address || !activity.address.latitude || !activity.address.longitude) return null;
           return (
             <Marker
               key={activity.id}
@@ -64,9 +60,9 @@ const Map = ({ selectedActivity, setSelectedActivity, resizeMap = false }: MapPr
               icon={customMarker}
               eventHandlers={{
                 click: () => {
-                  if (activity.address) {
+                  if (activity.address?.latitude && activity.address?.longitude) {
                     handleZoomToMarker(activity.address.latitude, activity.address.longitude);
-                    setSelectedActivity?.(activity);
+                    setSelectedActivityId?.(activity.id);
                   }
                 },
               }}

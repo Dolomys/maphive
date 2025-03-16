@@ -5,25 +5,25 @@ import { CreateUpdateActivityModal } from "./CreateUpdateActivityModal";
 import { Activity } from "../models/activity";
 import ActivityDetail from "./ActivityDetail";
 import { useAuth } from "@/app/(auth)/hooks/useAuth";
-import { useActivities } from "../hooks/useActivities";
-interface ActivityListProps {
-  selectedActivity: Activity | null;
-  setSelectedActivity: (activity: Activity | null) => void;
-}
+import { useGetActivities } from "../hooks/useGetActivities";
+import { Loader } from "@/components/ui/loader";
+import { useGetActivity } from "@/hooks/useGetActivity";
 
-const ActivityList = ({ selectedActivity, setSelectedActivity }: ActivityListProps) => {
-  const { activities } = useActivities();
-  const handleActivityClick = (activity: Activity) => {
-    setSelectedActivity(activity);
-  };
+const ActivityList = () => {
   const { user } = useAuth();
+  const { data: activities, isPending } = useGetActivities({ onlyPublished: true, userId: user?.id });
+  const { selectedActivityId, setSelectedActivityId } = useGetActivity();
+
+  const handleActivityClick = (activity: Activity) => {
+    setSelectedActivityId(activity.id);
+  };
 
   const handleBack = () => {
-    setSelectedActivity(null);
+    setSelectedActivityId(null);
   };
 
-  if (selectedActivity) {
-    return <ActivityDetail activity={selectedActivity} onBack={handleBack} />;
+  if (selectedActivityId) {
+    return <ActivityDetail onBack={handleBack} />;
   }
 
   return (
@@ -32,16 +32,20 @@ const ActivityList = ({ selectedActivity, setSelectedActivity }: ActivityListPro
         <CreateUpdateActivityModal
           trigger={
             <Button size="sm" className="w-fit">
-              <PlusIcon className="w-6 h-6 mr-2" /> Ajouter un lieu
+              <PlusIcon className="w-6 h-6 mr-2" /> Ajouter un stage
             </Button>
           }
         />
       )}
 
       <div className="space-y-4 mt-4 overflow-y-auto max-h-[80vh] pb-4">
-        {activities?.map((activity) => (
-          <ActivityCard key={activity.id} activity={activity} onItemClick={() => handleActivityClick(activity)} />
-        ))}
+        {isPending ? (
+          <Loader className="py-8" />
+        ) : (
+          activities?.map((activity) => (
+            <ActivityCard key={activity.id} activity={activity} onItemClick={() => handleActivityClick(activity)} />
+          ))
+        )}
       </div>
     </div>
   );

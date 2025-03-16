@@ -1,4 +1,4 @@
-import { ActivityCategory } from "@prisma/client";
+import { ActivityCategory, StudyType } from "@prisma/client";
 
 export interface ActivityFilters {
   search?: string;
@@ -9,6 +9,10 @@ export interface ActivityFilters {
   minRating?: number;
   maxRating?: number;
   city?: string;
+  creatorId?: string;
+  withCoordinates?: boolean;
+  onlyPublished?: boolean;
+  studyType?: StudyType;
 }
 
 export const DEFAULT_FILTERS: ActivityFilters = {
@@ -20,4 +24,5 @@ export const DEFAULT_FILTERS: ActivityFilters = {
   minRating: undefined,
   maxRating: undefined,
   city: undefined,
+  creatorId: undefined,
 };

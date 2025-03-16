@@ -7,17 +7,17 @@ export default function VerifyEmailPage() {
     <div className="flex min-h-screen items-center justify-center">
       <Card className="w-[400px]">
         <CardHeader>
-          <CardTitle>Check your email</CardTitle>
-          <CardDescription>We&apos;ve sent you a verification link to your email address</CardDescription>
+          <CardTitle>Vérifier votre email</CardTitle>
+          <CardDescription>Nous avons envoyé un lien de vérification à votre adresse email</CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
           <p className="text-sm text-muted-foreground">
-            Please click the link in your email to verify your account. If you don&apos;t see the email, check your spam
-            folder.
+            Veuillez cliquer sur le lien dans votre email pour vérifier votre compte. Si vous ne voyez pas l&apos;email,
+            vérifiez votre dossier spam.
           </p>
           <div className="flex justify-center">
             <Link href="/login">
-              <Button variant="outline">Return to login</Button>
+              <Button variant="outline">Retour à la connexion</Button>
             </Link>
           </div>
         </CardContent>

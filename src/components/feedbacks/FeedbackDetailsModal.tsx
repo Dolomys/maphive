@@ -4,19 +4,10 @@ import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } f
 import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
 import dayjs from "dayjs";
+import { FeedbackWithCreator } from "@/app/dashboard/feedbacks/page";
 
 interface FeedbackDetailsModalProps {
-  feedback: {
-    id: string;
-    message: string;
-    status: "pending" | "inProgress" | "resolved" | "rejected";
-    createdAt: string;
-    senderEmail: string | null;
-    creator?: {
-      name: string | null;
-      email: string;
-    } | null;
-  } | null;
+  feedback: FeedbackWithCreator | null;
   open: boolean;
   onOpenChange: (open: boolean) => void;
 }

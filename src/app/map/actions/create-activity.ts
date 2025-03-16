@@ -3,6 +3,7 @@ import { authActionClient } from "@/lib/safe-actions";
 import { prisma } from "@/lib/prisma";
 import { ActivityCategory } from "@prisma/client";
 import { CreateActivitySchema } from "../models/activity";
+import { revalidatePath } from "next/cache";
 
 export const createActivity = authActionClient
   .metadata({ name: "create-activity" })
@@ -43,8 +44,7 @@ export const createActivity = authActionClient
           address: true,
         },
       });
-      console.log("ACTIVITY", activity);
-
+      revalidatePath("/dashboard/activities", "page");
       return activity;
     }
   );

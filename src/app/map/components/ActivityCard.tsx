@@ -1,12 +1,8 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { MapPinIcon, AtSign, TrashIcon, MoreHorizontalIcon, PencilIcon } from "lucide-react";
+import { MapPinIcon, AtSign } from "lucide-react";
 import { Activity } from "../models/activity";
-import { Button } from "@/components/ui/button";
-import { useActivities } from "../hooks/useActivities";
-import ConfirmDialog from "@/components/ConfirmDialog";
-import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
-import { useAuth } from "@/app/(auth)/hooks/useAuth";
-import { CreateUpdateActivityModal } from "./CreateUpdateActivityModal";
+import { Badge } from "@/components/ui/badge";
+
 interface ActivityCardProps {
   activity: Activity;
   onItemClick?: (activity: Activity) => void;
@@ -18,33 +14,6 @@ export const ActivityCard = ({ activity, onItemClick }: ActivityCardProps) => {
       onItemClick(activity);
     }
   };
-  const { deleteActivity } = useActivities();
-  const { user } = useAuth();
-
-  const moreContent = (
-    <div className="flex flex-col gap-1 min-w-[140px]" onClick={(e) => e.stopPropagation()}>
-      <CreateUpdateActivityModal
-        trigger={
-          <div className="flex items-center gap-2.5 p-2 hover:bg-muted rounded-md transition-colors cursor-pointer">
-            <PencilIcon className="w-4 h-4 text-primary" />
-            <p className="text-sm">Modifier</p>
-          </div>
-        }
-        activity={activity}
-      />
-      <ConfirmDialog
-        title="Supprimer l'activité"
-        description="Voulez-vous vraiment supprimer cette activité ?"
-        onConfirm={() => deleteActivity(activity.id)}
-        trigger={
-          <div className="flex items-center gap-2.5 p-2 hover:bg-muted rounded-md transition-colors cursor-pointer">
-            <TrashIcon className="w-4 h-4 text-destructive" />
-            <p className="text-sm">Supprimer</p>
-          </div>
-        }
-      />
-    </div>
-  );
 
   return (
     <Card
@@ -53,18 +22,22 @@ export const ActivityCard = ({ activity, onItemClick }: ActivityCardProps) => {
     >
       <CardHeader className="pb-3">
         <CardTitle className="text-xl font-bold tracking-tight flex items-center justify-between">
-          {activity.title}
-          {activity.createdBy === user?.sub && (
-            <Popover>
-              <PopoverTrigger asChild onClick={(e) => e.stopPropagation()}>
-                <Button variant="ghost" size="icon">
-                  <MoreHorizontalIcon className="w-4 h-4" />
-                </Button>
-              </PopoverTrigger>
-              <PopoverContent className="w-fit">{moreContent}</PopoverContent>
-            </Popover>
-          )}
+          <div className="flex justify-between items-center gap-2 w-full">
+            {activity.title}
+            {activity.creator.study && (
+              <Badge variant="secondary" className="text-xs">
+                {activity.creator.study.type}
+              </Badge>
+            )}
+          </div>
         </CardTitle>
+        <div className="flex items-center gap-2">
+          {activity.status === "draft" && (
+            <Badge variant="warning" className="text-xs text-white">
+              En cours de révision
+            </Badge>
+          )}
+        </div>
         <CardDescription className="text-md font-medium text-muted-foreground/90 truncate">
           {activity.subtitle}
         </CardDescription>

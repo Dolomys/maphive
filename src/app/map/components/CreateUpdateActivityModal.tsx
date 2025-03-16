@@ -1,55 +1,67 @@
-import { useState } from "react";
+"use client";
+import { useState, useEffect } from "react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { useActivities } from "../hooks/useActivities";
-import { Activity, CreateActivityInput, CreateActivitySchema } from "../models/activity";
+import { Activity, CreateActivityInput, CreateActivitySchema } from "@/app/map/models/activity";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { cn } from "@/lib/utils";
 import { toast } from "sonner";
-import dynamic from "next/dynamic";
-import { LYON_CENTER } from "@/utils/const";
 import { Switch } from "@/components/ui/switch";
 import { Badge } from "@/components/ui/badge";
 import { Star } from "lucide-react";
-
-const SelectLocationMap = dynamic(() => import("./SelectLocationMap"), {
-  ssr: false,
-});
+import { useAuth } from "@/app/(auth)/hooks/useAuth";
+import { UserRole } from "@prisma/client";
 
 interface CreateUpdateActivityModalProps {
-  trigger: React.ReactNode;
-  activity?: Activity;
+  activity?: Activity | null;
+  open?: boolean;
+  onOpenChange?: (open: boolean) => void;
+  trigger?: React.ReactNode;
 }
 
-export const CreateUpdateActivityModal = ({ trigger, activity }: CreateUpdateActivityModalProps) => {
+export const CreateUpdateActivityModal = ({
+  activity,
+  open,
+  onOpenChange,
+  trigger,
+}: CreateUpdateActivityModalProps) => {
   const { createActivity, updateActivity } = useActivities();
-  const [open, setOpen] = useState(false);
+  const { user } = useAuth();
+
+  const defaultValues = {
+    title: activity?.title,
+    subtitle: activity?.subtitle || "",
+    adress: {
+      street: activity?.address?.street || "",
+      city: activity?.address?.city || "",
+      zip: activity?.address?.zip || "",
+      latitude: activity?.address?.latitude || 0,
+      longitude: activity?.address?.longitude || 0,
+    },
+    contact: activity?.contact || "",
+    description: activity?.description || "",
+    type: activity?.type || "structure",
+    imageUrl: activity?.imageUrl || "",
+    duration: activity?.duration || undefined,
+    missions: activity?.missions || [],
+    isPaid: activity?.isPaid || false,
+    rating: activity?.rating || undefined,
+    status: activity?.status || "draft",
+  };
+
+  useEffect(() => {
+    form.reset(defaultValues);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [activity]);
 
   const form = useForm<CreateActivityInput>({
     resolver: zodResolver(CreateActivitySchema),
-    defaultValues: {
-      title: activity?.title || "",
-      subtitle: activity?.subtitle || "",
-      adress: {
-        street: activity?.address?.street || "",
-        city: activity?.address?.city || "",
-        zip: activity?.address?.zip || "",
-        latitude: activity?.address?.latitude || 0,
-        longitude: activity?.address?.longitude || 0,
-      },
-      contact: activity?.contact || "",
-      description: activity?.description || "",
-      type: activity?.type || "structure",
-      imageUrl: activity?.imageUrl || "",
-      duration: activity?.duration || undefined,
-      missions: activity?.missions || [],
-      isPaid: activity?.isPaid || false,
-      rating: activity?.rating || undefined,
-    },
+    defaultValues: defaultValues,
     mode: "onTouched",
   });
 
@@ -74,42 +86,35 @@ export const CreateUpdateActivityModal = ({ trigger, activity }: CreateUpdateAct
   const onSubmit = async (data: CreateActivityInput) => {
     try {
       if (activity) {
-        await updateActivity({ ...data, id: activity.id });
+        updateActivity({ ...data, id: activity.id });
       } else {
-        await createActivity(data);
+        createActivity(data);
       }
       form.reset();
-      setOpen(false);
-      toast.success("Activity created successfully");
+      console.log("onOpenChange", onOpenChange);
+      onOpenChange?.(false);
+      toast.success("Stage créé avec succès");
     } catch (error) {
-      toast.error("Failed to create activity");
-      console.error("Error creating activity:", error);
+      toast.error("Erreur lors de la création du stage");
+      console.error("Erreur lors de la création du stage:", error);
     }
   };
 
   const onError = () => {
-    toast.error("Please fix the errors before submitting");
-  };
-
-  const handleLocationSelect = (lat: number, lng: number) => {
-    form.setValue("adress.latitude", lat);
-    form.setValue("adress.longitude", lng);
+    toast.error("Veuillez corriger les erreurs avant de soumettre");
   };
 
   return (
-    <Dialog
-      open={open}
-      onOpenChange={(isOpen) => {
-        setOpen(isOpen);
-        if (!isOpen) {
-          form.reset();
-        }
-      }}
-    >
+    <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogTrigger asChild>{trigger}</DialogTrigger>
       <DialogContent className="sm:max-w-[725px] max-h-[70dvh] md:max-h-[90vh] overflow-y-auto">
         <DialogHeader>
-          <DialogTitle>{activity ? "Modifier un lieu" : "Ajouter un lieu"}</DialogTitle>
+          <DialogTitle>{activity ? "Modifier un stage" : "Ajouter un stage"}</DialogTitle>
+          {activity?.status === "published" && (
+            <p className="text-sm text-yellow-600 mt-2">
+              Attention : la modification d&apos;un stage publié le repassera automatiquement en révision
+            </p>
+          )}
         </DialogHeader>
         <form onSubmit={form.handleSubmit(onSubmit, onError)} className="space-y-4">
           <div className="space-y-2">
@@ -117,13 +122,13 @@ export const CreateUpdateActivityModal = ({ trigger, activity }: CreateUpdateAct
               htmlFor="title"
               className={cn("flex items-baseline gap-2", form.formState.errors.title && "text-red-500")}
             >
-              <span>Titre</span>
+              <span>Nom de la structure</span>
               <span className="text-sm text-red-500">*</span>
             </Label>
             <Input
               id="title"
               {...form.register("title")}
-              placeholder="Entrer le titre"
+              placeholder="Entrer le nom de la structure"
               className={cn(form.formState.errors.title && "border-red-500")}
               aria-invalid={!!form.formState.errors.title}
             />
@@ -132,11 +137,11 @@ export const CreateUpdateActivityModal = ({ trigger, activity }: CreateUpdateAct
             )}
           </div>
           <div className="space-y-2">
-            <Label htmlFor="subtitle">Subtitle</Label>
+            <Label htmlFor="subtitle">Poste occupé</Label>
             <Input
               id="subtitle"
               {...form.register("subtitle")}
-              placeholder="Entrer le sous-titre"
+              placeholder="Entrer le poste occupé"
               className={cn(form.formState.errors.subtitle && "border-red-500")}
               aria-invalid={!!form.formState.errors.subtitle}
             />
@@ -203,63 +208,12 @@ export const CreateUpdateActivityModal = ({ trigger, activity }: CreateUpdateAct
               )}
             </div>
           </div>
-
           <div className="space-y-2">
-            <Label className="flex items-baseline gap-2">
-              <span>Localisation</span>
-              <span className="text-sm text-red-500">*</span>
-              <span className="text-sm text-muted-foreground">(Cliquer sur la carte ou saisir les coordonnées)</span>
-            </Label>
-            <div className="h-[300px] w-full border rounded-lg overflow-hidden">
-              <SelectLocationMap
-                onLocationSelect={handleLocationSelect}
-                initialLatitude={LYON_CENTER.lat}
-                initialLongitude={LYON_CENTER.lng}
-              />
-            </div>
-            <div className="grid grid-cols-2 gap-4 mt-2">
-              <div className="space-y-2">
-                <Label htmlFor="latitude">Latitude</Label>
-                <Input
-                  id="latitude"
-                  type="number"
-                  step="any"
-                  {...form.register("adress.latitude", {
-                    valueAsNumber: true,
-                    onChange: (e) => {
-                      const lat = parseFloat(e.target.value);
-                      const lng = form.getValues("adress.longitude");
-                      handleLocationSelect(lat, lng);
-                    },
-                  })}
-                  placeholder="Latitude"
-                />
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="longitude">Longitude</Label>
-                <Input
-                  id="longitude"
-                  type="number"
-                  step="any"
-                  {...form.register("adress.longitude", {
-                    valueAsNumber: true,
-                    onChange: (e) => {
-                      const lng = parseFloat(e.target.value);
-                      const lat = form.getValues("adress.latitude");
-                      handleLocationSelect(lat, lng);
-                    },
-                  })}
-                  placeholder="Longitude"
-                />
-              </div>
-            </div>
-          </div>
-          <div className="space-y-2">
-            <Label htmlFor="contact">Contact</Label>
+            <Label htmlFor="contact">Votre contact</Label>
             <Input
               id="contact"
               {...form.register("contact")}
-              placeholder="Entrer les informations de contact"
+              placeholder="Numéro de téléphone, Instagram, Email..."
               className={cn(form.formState.errors.contact && "border-red-500")}
               aria-invalid={!!form.formState.errors.contact}
             />
@@ -349,13 +303,52 @@ export const CreateUpdateActivityModal = ({ trigger, activity }: CreateUpdateAct
               </div>
             </div>
           </div>
+          {user?.role === UserRole.admin && (
+            <>
+              <div className="grid grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <Label htmlFor="latitude">Latitude</Label>
+                  <Input
+                    id="latitude"
+                    type="number"
+                    step="any"
+                    {...form.register("adress.latitude", {
+                      setValueAs: (value: string) => (value === "" ? 0 : parseFloat(value)),
+                    })}
+                    placeholder="Latitude"
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="longitude">Longitude</Label>
+                  <Input
+                    id="longitude"
+                    type="number"
+                    step="any"
+                    {...form.register("adress.longitude", {
+                      setValueAs: (value: string) => (value === "" ? 0 : parseFloat(value)),
+                    })}
+                    placeholder="Longitude"
+                  />
+                </div>
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="status">Statut</Label>
+                <select id="status" {...form.register("status")} className="w-full p-2 border rounded-md">
+                  <option value="draft">Brouillon</option>
+                  <option value="published">Publié</option>
+                  <option value="archived">Archivé</option>
+                </select>
+              </div>
+            </>
+          )}
           <div className="flex justify-end gap-2">
             <Button
               type="button"
               variant="outline"
               onClick={() => {
                 form.reset();
-                setOpen(false);
+                onOpenChange?.(false);
               }}
             >
               Annuler
