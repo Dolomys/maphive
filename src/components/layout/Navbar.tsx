@@ -1,5 +1,5 @@
 "use client";
-import { BookOpen, MapPinned, Menu, User } from "lucide-react";
+import { BookOpen, Menu, User } from "lucide-react";
 import React from "react";
 import { Sheet, SheetContent, SheetFooter, SheetHeader, SheetTitle, SheetTrigger } from "../ui/sheet";
 import { Separator } from "../ui/separator";
