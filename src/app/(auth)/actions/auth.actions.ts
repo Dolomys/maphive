@@ -46,6 +46,7 @@ export const signup = actionClient.schema(signupSchema).action(async ({ parsedIn
       data: {
         name,
       },
+      emailRedirectTo: `${process.env.NEXT_PUBLIC_APP_URL}`,
     },
   });
 
