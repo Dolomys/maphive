@@ -154,13 +154,13 @@ export const Navbar = () => {
               </DropdownMenuItem>
               <DropdownMenuSeparator />
               <DropdownMenuItem onClick={() => logout()} className="cursor-pointer">
-                Sign out
+                Déconnexion
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
         ) : (
           <Link href="/login">
-            <Button size="sm">Sign in</Button>
+            <Button size="sm">Connexion</Button>
           </Link>
         )}
       </div>
